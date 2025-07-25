@@ -1,0 +1,93 @@
+/* public/css/barber-dashboard.css */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #1a202c; /* Fundo escuro */
+    color: #e2e8f0; /* Texto claro */
+}
+.container {
+    max-width: 1200px;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+.day-cell {
+    padding: 8px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.day-cell.current-month {
+    background-color: #2d3748; /* Cinza escuro */
+}
+.day-cell.selected {
+    background-color: #fcd34d; /* Amarelo da logo */
+    color: #1a202c; /* Texto escuro no amarelo para contraste */
+    font-weight: bold;
+}
+.day-cell.has-appointments {
+    border: 2px solid #fcd34d; /* Amarelo da logo para indicar agendamentos */
+}
+.day-cell:not(.disabled):hover {
+    background-color: #4a5568; /* Cinza mais claro no hover */
+}
+.day-cell.disabled {
+    color: #a0aec0; /* Cinza claro para dias desabilitados */
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.appointment-card {
+    background-color: #2d3748; /* Fundo dos cards de agendamento */
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.appointment-card.booked {
+    border-left: 5px solid #fcd34d; /* Amarelo para agendado */
+}
+.appointment-card.completed {
+    border-left: 5px solid #48bb78; /* Verde para concluído (mantido para diferenciar visualmente do amarelo) */
+}
+.appointment-card.cancelled {
+    border-left: 5px solid #e53e3e; /* Vermelho para cancelado (mantido para alerta) */
+}
+.appointment-card.unavailable {
+    border-left: 5px solid #ecc94b; /* Amarelo mais claro para indisponível */
+}
+
+/* Ajustes para elementos específicos do painel do barbeiro que podem ter cores azuis */
+/* Título do Painel no Header (se estiver usando uma classe ou ID específico) */
+header h1 {
+    color: #fcd34d; /* Amarelo da logo */
+}
+
+/* Links de navegação no Header (se estiverem azuis) */
+header nav a {
+    color: #e2e8f0; /* Texto claro padrão */
+}
+
+header nav a:hover {
+    color: #fcd34d; /* Amarelo da logo no hover */
+}
+
+/* Botões de navegação do calendário (Anterior/Próximo) */
+.bg-blue-500 { /* Tailwind class que pode estar sendo usada */
+    background-color: #fcd34d; /* Amarelo da logo */
+    color: #1a202c; /* Texto escuro para contraste */
+}
+
+.hover\:bg-blue-600:hover { /* Tailwind class que pode estar sendo usada */
+    background-color: #e0b32f; /* Um tom um pouco mais escuro de amarelo para o hover */
+}
+
+/* Botões de status nos cards de agendamento (se houver algum azul) */
+/* As cores para 'completed', 'cancelled', 'unavailable' já estão definidas e são diferentes para clareza. */
+/* Se houver um botão genérico azul, ajuste aqui: */
+/* .some-blue-button-class {
+    background-color: #fcd34d;
+    color: #1a202c;
+} */

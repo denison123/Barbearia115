@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia 115 - Painel do Barbeiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/barber-dashboard.css">
+</head>
+<body class="bg-gray-800 text-white min-h-screen flex flex-col">
+
+    <header class="bg-gray-900 p-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center">
+            <img src="imag/barbearia-115.jpeg" alt="Logo Barbearia 115" class="h-10 mr-3 rounded-full">
+            <h1 class="text-2xl font-bold">Barbearia 115</h1>
+        </div>
+        <nav>
+            <span id="welcomeMessage" class="mr-4 text-lg">Olá, João Barbeiro!</span>
+            <button id="logoutButton" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mr-2">Sair</button>
+            <button id="backToSiteButton" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">Voltar ao Site</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6 flex-grow">
+
+        <section class="mb-8 p-6 bg-gray-900 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-bold text-center mb-6">Estatísticas Mensais</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-400">Cortes Realizados:</h3>
+                    <p id="completedCuts" class="text-4xl font-bold mt-2">0</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-yellow-400">Cortes Pendentes:</h3>
+                    <p id="pendingCuts" class="text-4xl font-bold mt-2">0</p>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-red-400">Cortes Cancelados:</h3>
+                    <p id="cancelledCuts" class="text-4xl font-bold mt-2">0</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 p-6 bg-gray-900 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-bold text-center mb-6">Meus Agendamentos</h2>
+            <div class="calendar-navigation flex justify-between items-center mb-4">
+                <button id="prevMonthAppointments" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"> &lt; Anterior </button>
+                <h3 id="currentMonthYearAppointments" class="text-xl font-semibold">Julho de 2025</h3>
+                <button id="nextMonthAppointments" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"> Próximo &gt; </button>
+            </div>
+            <div id="appointmentsCalendar" class="calendar-grid grid grid-cols-7 gap-1 text-center bg-gray-700 p-2 rounded-lg">
+                <div class="font-bold text-gray-400">Dom</div>
+                <div class="font-bold text-gray-400">Seg</div>
+                <div class="font-bold text-gray-400">Ter</div>
+                <div class="font-bold text-gray-400">Qua</div>
+                <div class="font-bold text-gray-400">Qui</div>
+                <div class="font-bold text-gray-400">Sex</div>
+                <div class="font-bold text-gray-400">Sáb</div>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 mt-8 text-white">Agendamentos para Selecione uma Data</h3>
+            <div id="appointmentsList" class="space-y-3 mt-4">
+                <p class="text-gray-400">Nenhum agendamento para esta data.</p>
+            </div>
+        </section>
+
+        <section class="p-6 bg-gray-900 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-bold text-center mb-6">Gerenciar Dias de Disponibilidade</h2>
+            <div class="calendar-navigation flex justify-between items-center mb-4">
+                <button id="prevMonthManage" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"> &lt; Anterior </button>
+                <h3 id="currentMonthYearManage" class="text-xl font-semibold">Julho de 2025</h3>
+                <button id="nextMonthManage" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"> Próximo &gt; </button>
+            </div>
+            <div id="manageCalendar" class="calendar-grid grid grid-cols-7 gap-1 text-center bg-gray-700 p-2 rounded-lg">
+                <div class="font-bold text-gray-400">Dom</div>
+                <div class="font-bold text-gray-400">Seg</div>
+                <div class="font-bold text-gray-400">Ter</div>
+                <div class="font-bold text-gray-400">Qua</div>
+                <div class="font-bold text-gray-400">Qui</div>
+                <div class="font-bold text-gray-400">Sex</div>
+                <div class="font-bold text-gray-400">Sáb</div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3 mt-8 text-white">Meus Dias Disponíveis Cadastrados</h3>
+            <div id="availableDaysList" class="space-y-3 mt-4">
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 p-4 text-center text-gray-500 mt-8">
+        © DRI_TECNOLOGIA. Todos os direitos reservados.
+    </footer>
+
+    <script src="js/barber-dashboard.js"></script>
+</body>
+</html>
