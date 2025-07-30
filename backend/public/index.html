@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia 115</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilos específicos para o slider */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Ajuste conforme necessário */
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-image {
+            width: 100%;
+            display: none; /* Oculta todas as imagens por padrão, o JS mostrará a ativa */
+            border-radius: 8px;
+            object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
+            height: 300px; /* Altura fixa para as imagens do slider */
+        }
+
+        .slider-image.active {
+            display: block; /* Mostra a imagem ativa */
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .slider-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .slider-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Header Principal -->
+    <header class="main-header">
+        <div class="logo">
+            <!-- Certifique-se de que esta imagem tem o fundo transparente e o nome do arquivo correto (ex: .png) -->
+            <img src="imag/barbearia-115.jpeg" alt="Logotipo Barbearia 115" class="h-10 rounded-lg mr-2">
+            <span class="text-yellow-400 font-bold text-xl">Barbearia 115</span>
+        </div>
+        <nav class="main-nav">
+            <a href="login.html" class="login-btn">Área do Barbeiro</a>
+            <a href="#appointment-section" class="book-now-btn">Agende Agora</a>
+        </nav>
+    </header>
+
+    <!-- Seção Hero (Banner Principal) -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Estilo e Tradição em Cada Corte</h1>
+            <p class="hero-subtitle">Transformando visuais com paixão e precisão.</p>
+            <a href="#appointment-section" class="hero-button">Agende seu Horário</a>
+        </div>
+    </section>
+
+    <!-- Seção Sobre Nós -->
+    <section class="about-us-section">
+        <div class="about-content">
+            <div class="about-image">
+                <!-- Slider de Fotos -->
+                <div class="slider-container" id="service-slider">
+                    <img src="https://placehold.co/500x300/34D399/FFFFFF?text=Corte+Clássico" alt="Corte Clássico" class="slider-image active">
+                    <img src="https://placehold.co/500x300/EF4444/FFFFFF?text=Barba+Modelada" alt="Barba Modelada" class="slider-image">
+                    <img src="https://placehold.co/500x300/6366F1/FFFFFF?text=Tratamento+Capilar" alt="Tratamento Capilar" class="slider-image">
+                    <img src="https://placehold.co/500x300/F97316/FFFFFF?text=Design+de+Cabelo" alt="Design de Cabelo" class="slider-image">
+                    
+                    <button class="slider-button prev-slide">&lt;</button>
+                    <button class="slider-button next-slide">&gt;</button>
+                    <div class="slider-dots"></div>
+                </div>
+            </div>
+            <div class="about-text">
+                <h2 class="text-yellow-400 text-3xl font-bold mb-4">Sobre Nós</h2>
+                <p class="text-gray-300 mb-4">Na Barbearia 115, combinamos tradição e modernidade para oferecer uma experiência única em cuidados masculinos. Nossos barbeiros são especialistas em criar o visual perfeito para você, seja um corte clássico ou as últimas tendências.</p>
+                <p class="text-gray-300 mb-4">Nosso ambiente é pensado para o seu conforto e relaxamento, com atendimento personalizado e produtos de alta qualidade. Venha nos visitar e descubra a diferença de um serviço feito com paixão e precisão.</p>
+                <p class="text-gray-300">Siga-nos no Instagram: <a href="https://instagram.com/barbearia_115" target="_blank" class="text-yellow-400 hover:underline">@barbearia_115</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Serviços (Exemplo) -->
+    <section class="services-section" id="services-section">
+        <h2 class="text-yellow-400 text-3xl font-bold mb-8 text-center">Nossos Serviços</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <h3 class="text-xl font-semibold text-white mb-2">Corte de Cabelo</h3>
+                <p class="text-gray-300">Cortes clássicos e modernos, adaptados ao seu estilo.</p>
+            </div>
+            <div class="service-card">
+                <h3 class="text-xl font-semibold text-white mb-2">Barba Modelada</h3>
+                <p class="text-gray-300">Modelagem e aparo da barba com toalha quente.</p>
+            </div>
+            <div class="service-card">
+                <h3 class="text-xl font-semibold text-white mb-2">Combo (Corte + Barba)</h3>
+                <p class="text-gray-300">Pacote completo para um visual impecável.</p>
+            </div>
+            <div class="service-card">
+                <h3 class="text-xl font-semibold text-white mb-2">Tratamento Capilar</h3>
+                <p class="text-gray-300">Hidratação e cuidados especiais para seu cabelo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Agendamento -->
+    <section class="appointment-section" id="appointment-section">
+        <div class="appointment-page-container">
+            <div class="calendar-section">
+                <h2 class="text-yellow-400 text-3xl font-bold mb-4 text-center">Agende seu Horário</h2>
+                <div class="form-group mb-4">
+                    <label for="barber-select" class="block text-gray-300 text-sm font-bold mb-2">Selecione o Barbeiro:</label>
+                    <select id="barber-select" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400"></select>
+                </div>
+                <div class="calendar-navigation">
+                    <button id="prev-month" class="nav-button">&lt; Anterior</button>
+                    <span id="current-month-year">Mês Ano</span>
+                    <button id="next-month" class="nav-button">Próximo &gt;</button>
+                </div>
+                <div id="calendar-grid" class="calendar-grid">
+                    <!-- Dias da semana e dias do mês serão injetados aqui pelo JS -->
+                    <div class="font-bold text-gray-400">Dom</div>
+                    <div class="font-bold text-gray-400">Seg</div>
+                    <div class="font-bold text-gray-400">Ter</div>
+                    <div class="font-bold text-gray-400">Qua</div>
+                    <div class="font-bold text-gray-400">Qui</div>
+                    <div class="font-bold text-gray-400">Sex</div>
+                    <div class="font-bold text-gray-400">Sáb</div>
+                </div>
+                <div class="available-times-section">
+                    <h3 class="text-yellow-400 text-2xl font-semibold mb-3 text-center">Horários Disponíveis</h3>
+                    <div id="available-times-list" class="flex flex-wrap justify-center gap-2">
+                        <p class="text-gray-400">Selecione uma data para ver os horários.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h2 class="text-yellow-400 text-3xl font-bold mb-4 text-center">Detalhes do Agendamento</h2>
+                <div class="form-group">
+                    <label for="selected-date" class="block text-gray-300 text-sm font-bold mb-2">Data Selecionada:</label>
+                    <input type="text" id="selected-date" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="selected-time" class="block text-gray-300 text-sm font-bold mb-2">Hora Selecionada:</label>
+                    <input type="text" id="selected-time" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="customer-name-input" class="block text-gray-300 text-sm font-bold mb-2">Seu Nome:</label>
+                    <input type="text" id="customer-name-input" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone-input" class="block text-gray-300 text-sm font-bold mb-2">Seu Telefone:</label>
+                    <input type="tel" id="customer-phone-input" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400">
+                </div>
+                <div class="form-group">
+                    <label for="service-select" class="block text-gray-300 text-sm font-bold mb-2">Serviço:</label>
+                    <select id="service-select" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" required>
+                        <option value="">Selecione um Serviço</option>
+                        <option value="Corte de Cabelo">Corte de Cabelo</option>
+                        <option value="Barba Modelada">Barba Modelada</option>
+                        <option value="Combo (Corte + Barba)">Combo (Corte + Barba)</option>
+                        <option value="Tratamento Capilar">Tratamento Capilar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payment-method-select" class="block text-gray-300 text-sm font-bold mb-2">Forma de Pagamento:</label>
+                    <select id="payment-method-select" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" required>
+                        <option value="">Selecione a Forma de Pagamento</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Pix">Pix</option>
+                    </select>
+                </div>
+                <button id="confirm-appointment-button" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-full w-full transition duration-300">Confirmar Agendamento</button>
+                <p id="appointment-message" class="mt-4 text-center font-semibold"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; DRL_TECNOLOGIA. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/slider.js"></script>
+</body>
+</html>

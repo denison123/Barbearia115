@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia 115 - Login do Barbeiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Caminho corrigido para o CSS. Se o HTML está em /public/, e o CSS em /public/css/, o caminho é direto 'css/...' -->
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex items-center justify-center p-4">
+
+    <div class="login-container bg-gray-800 p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-sm mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-bold text-center text-yellow-400 mb-6 sm:mb-8">Login do Barbeiro</h2>
+        <form id="loginForm" class="space-y-4 sm:space-y-6" method="post">
+            <div>
+                <label for="email" class="block text-gray-300 text-sm font-bold mb-2">Email:</label>
+                <input type="email" id="email" name="email" class="shadow appearance-none border rounded w-full py-2 px-3 sm:py-3 sm:px-4 bg-gray-700 text-gray-200 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div>
+                <label for="password" class="block text-gray-300 text-sm font-bold mb-2">Senha:</label>
+                <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 sm:py-3 sm:px-4 bg-gray-700 text-gray-200 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-full text-base sm:text-lg w-full transition duration-300 transform hover:scale-105">Entrar</button>
+            <p id="loginMessage" class="mt-4 text-center text-sm sm:text-lg font-semibold"></p>
+        </form>
+        <div class="text-center mt-4">
+            <!-- Caminho corrigido para o link "Ir para a Área de Agendamento". Se index.html está em /public/, o caminho é direto. -->
+            <a href="index.html" class="inline-block bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-2 px-4 rounded-full text-sm transition duration-300">Ir para a Área de Agendamento</a>
+        </div>
+    </div>
+
+    <!-- Inclua o script JS do login. Caminho corrigido. -->
+    <script src="js/login.js"></script>
+</body>
+</html>

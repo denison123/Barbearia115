@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia 115 - Dashboard do Barbeiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/barber-dashboard.css">
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Header Principal (similar ao index.html) -->
+    <header class="main-header">
+        <div class="logo">
+            <img src="imag/barbearia-115.jpeg" alt="Logotipo Barbearia 115" class="h-10 rounded-lg mr-2">
+            <span class="text-yellow-400 font-bold text-xl">Barbearia 115</span>
+        </div>
+        <nav class="main-nav">
+            <span id="welcome-message" class="text-gray-300 mr-4">Olá, Barbeiro!</span>
+            <a href="#" id="view-site-link" class="login-btn">Voltar ao Site</a>
+            <button id="logout-button" class="book-now-btn">Sair</button>
+        </nav>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Seção de Estatísticas Mensais - PRIMEIRO -->
+        <section class="stats-section">
+            <h2 class="section-title">Estatísticas Mensais</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 class="stat-title">Cortes Realizados:</h3>
+                    <p id="cortes-realizados" class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-title">Cortes Pendentes:</h3>
+                    <p id="cortes-pendentes" class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-title">Cortes Cancelados:</h3>
+                    <p id="cortes-cancelados" class="stat-value">0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Gerenciar Dias de Disponibilidade - SEGUNDO -->
+        <section class="availability-section">
+            <h2 class="section-title">Gerenciar Dias de Disponibilidade</h2>
+            <div class="calendar-navigation">
+                <button id="prev-month-availability" class="nav-button">&lt; Anterior</button>
+                <span id="current-month-availability">Mês Ano</span>
+                <button id="next-month-availability" class="nav-button">Próximo &gt;</button>
+            </div>
+            <div id="availability-calendar" class="calendar-grid">
+                <!-- Dias da semana e dias do mês serão injetados aqui pelo JS -->
+                <div class="font-bold text-gray-400">Dom</div>
+                <div class="font-bold text-gray-400">Seg</div>
+                <div class="font-bold text-gray-400">Ter</div>
+                <div class="font-bold text-gray-400">Qua</div>
+                <div class="font-bold text-gray-400">Qui</div>
+                <div class="font-bold text-gray-400">Sex</div>
+                <div class="font-bold text-gray-400">Sáb</div>
+            </div>
+            <h3 class="subsection-title">Meus Dias Disponíveis Cadastrados</h3>
+            <ul id="available-days-list" class="available-days-list">
+                <li class="text-gray-400">Nenhum dia de disponibilidade cadastrado.</li>
+            </ul>
+            <button id="save-availability-btn" class="save-button">Salvar Disponibilidade</button>
+        </section>
+
+        <!-- Seção Meus Agendamentos - TERCEIRO -->
+        <section class="appointments-section">
+            <h2 class="section-title">Meus Agendamentos</h2>
+            <div class="calendar-navigation">
+                <button id="prev-month-appointments" class="nav-button">&lt; Anterior</button>
+                <span id="current-month-appointments">Mês Ano</span>
+                <button id="next-month-appointments" class="nav-button">Próximo &gt;</button>
+            </div>
+            <div id="appointments-calendar" class="calendar-grid">
+                <!-- Dias da semana e dias do mês serão injetados aqui pelo JS -->
+                <div class="font-bold text-gray-400">Dom</div>
+                <div class="font-bold text-gray-400">Seg</div>
+                <div class="font-bold text-gray-400">Ter</div>
+                <div class="font-bold text-gray-400">Qua</div>
+                <div class="font-bold text-gray-400">Qui</div>
+                <div class="font-bold text-gray-400">Sex</div>
+                <div class="font-bold text-gray-400">Sáb</div>
+            </div>
+            <h3 class="subsection-title">Agendamentos para <span id="selected-date-display"></span></h3>
+            <ul id="appointments-list" class="appointments-list">
+                <li class="text-gray-400">Selecione uma data para ver os agendamentos.</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; DRL_TECNOLOGIA. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="js/barber-dashboard.js"></script>
+</body>
+</html>

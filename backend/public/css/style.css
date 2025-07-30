@@ -1,0 +1,790 @@
+/* public/css/style.css */
+
+/* Importa a fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap'); /* Adicionado peso 800 para títulos */
+
+/* Color Palette Reference (Adjusted for Modern Dark Theme) */
+/* Primary Background: #121212 (Almost Black) */
+/* Secondary Background: #1F2937 (Dark Gray - for sections/cards) */
+/* Tertiary Background: #374151 (Medium Gray - for inner elements like calendar days, input fields) */
+/* Accent Yellow: #FACC15 (Brighter, more vibrant yellow) */
+/* Text Light: #E5E7EB (Off-white for main text) */
+/* Text Muted: #9CA3AF (Subtle gray for secondary text/placeholders) */
+/* Green Success: #10B981 */
+/* Red Error: #EF4444 */
+/* Blue Selected: #3B82F6 */
+/* Indigo Buttons: #6366F1 */
+
+
+/* Estilos globais e resets */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #121212; /* Fundo principal mais escuro */
+    color: #E5E7EB; /* Texto principal mais claro */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center; /* Centraliza o conteúdo horizontalmente */
+    justify-content: flex-start; /* Alinha o conteúdo ao topo */
+    padding: 0; /* Remover padding global, gerenciar por seções */
+    overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
+h1, h2, h3 {
+    color: #FACC15; /* Amarelo vibrante para títulos */
+    font-weight: 800; /* Mais negrito para impacto */
+    margin-bottom: 1rem; /* Espaçamento padrão para títulos */
+}
+
+/* Header Principal */
+.main-header {
+    background-color: #1F2937; /* Dark Gray para o cabeçalho */
+    padding: 1.25rem 2rem; /* Aumentado o padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada */
+    border-bottom-left-radius: 12px; /* Cantos mais arredondados */
+    border-bottom-right-radius: 12px;
+    width: 100%;
+    max-width: 1400px; /* Aumentado max-width para telas maiores */
+    margin-bottom: 2.5rem; /* Mais espaçamento */
+    z-index: 100; /* Garante que o header fique acima de outros elementos */
+    position: sticky; /* Fixa o header no topo */
+    top: 0;
+}
+
+.main-header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.main-header .logo img {
+    height: 48px; /* Logo um pouco maior */
+    margin-right: 12px;
+    border-radius: 12px; /* Mais arredondado */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.main-header .logo span {
+    font-size: 1.8rem; /* Fonte maior */
+    font-weight: 800;
+    color: #FACC15;
+    letter-spacing: 0.05em; /* Pequeno espaçamento entre letras */
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Mais espaçamento entre botões */
+}
+
+/* Estilo para o botão "Área do Barbeiro" */
+.main-nav .login-btn {
+    background-color: #374151; /* Medium Gray */
+    color: #E5E7EB;
+    padding: 0.6rem 1.2rem; /* Padding ajustado */
+    border-radius: 9999px; /* Totalmente arredondado */
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: 1px solid #4B5563; /* Borda sutil */
+}
+
+.main-nav .login-btn:hover {
+    background-color: #4B5563; /* Tom mais claro no hover */
+    transform: translateY(-2px); /* Efeito de "levantar" */
+}
+
+/* Estilo para o botão "Agende Agora" */
+.main-nav .book-now-btn {
+    background-color: #FACC15; /* Amarelo vibrante */
+    color: #121212; /* Texto escuro */
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
+    font-weight: 700; /* Mais negrito */
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(252, 204, 21, 0.3); /* Sombra amarela */
+}
+
+.main-nav .book-now-btn:hover {
+    background-color: #EAB308; /* Amarelo um pouco mais escuro no hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(252, 204, 21, 0.4);
+}
+
+/* Seção Hero (Banner Principal) */
+.hero-section {
+    background-image: url('https://placehold.co/1400x500/1F2937/E5E7EB?text=Barbearia+115+-+Estilo+e+Tradição'); /* Imagem de banner */
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    max-width: 1400px;
+    height: 500px; /* Altura do banner aumentada */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 3rem; /* Mais espaçamento */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Sombra mais forte */
+    position: relative; /* Para o overlay */
+}
+
+.hero-section::before { /* Overlay sutil */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Overlay um pouco menos opaco */
+    border-radius: 12px;
+}
+
+.hero-content {
+    position: relative; /* Para ficar acima do overlay */
+    z-index: 1;
+    background-color: rgba(25, 30, 40, 0.7); /* Fundo semi-transparente para o texto */
+    padding: 2.5rem 3.5rem; /* Mais padding */
+    border-radius: 12px;
+    backdrop-filter: blur(5px); /* Efeito de desfoque no fundo */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hero-title {
+    font-size: 3.5rem; /* Título maior */
+    margin-bottom: 1.2rem;
+    color: #FACC15;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra no texto */
+}
+
+.hero-subtitle {
+    font-size: 1.8rem; /* Subtítulo maior */
+    margin-bottom: 2.5rem;
+    color: #E5E7EB;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.hero-button {
+    background-color: #FACC15;
+    color: #121212;
+    padding: 1.2rem 2.5rem; /* Botão maior */
+    border-radius: 9999px;
+    font-weight: 800; /* Mais negrito */
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(252, 204, 21, 0.4);
+}
+
+.hero-button:hover {
+    background-color: #EAB308;
+    transform: translateY(-3px); /* Efeito de "levantar" mais pronunciado */
+    box-shadow: 0 8px 20px rgba(252, 204, 21, 0.5);
+}
+
+/* Seção Sobre Nós */
+.about-us-section {
+    width: 100%;
+    max-width: 1400px;
+    background-color: #1F2937; /* Dark Gray */
+    padding: 3rem; /* Mais padding */
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Borda sutil */
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem; /* Mais espaçamento entre imagem e texto */
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .about-content {
+        flex-direction: row;
+        text-align: left;
+    }
+}
+
+.about-image, .about-text {
+    flex: 1;
+}
+
+/* Slider Container */
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 550px; /* Ajuste para o slider */
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 12px; /* Mais arredondado */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    background-color: #374151; /* Fundo para o slider */
+}
+
+.slider-image {
+    width: 100%;
+    display: none;
+    border-radius: 12px;
+    object-fit: cover;
+    height: 350px; /* Altura fixa para as imagens do slider */
+    transition: opacity 0.5s ease-in-out; /* Transição de fade */
+}
+
+.slider-image.active {
+    display: block;
+    opacity: 1;
+}
+
+.slider-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(25, 30, 40, 0.6); /* Fundo mais escuro e opaco */
+    color: white;
+    border: none;
+    padding: 12px 18px; /* Botões maiores */
+    cursor: pointer;
+    font-size: 1.8rem; /* Ícone maior */
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex; /* Para centralizar o ícone */
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-button:hover {
+    background-color: rgba(25, 30, 40, 0.9); /* Mais escuro no hover */
+    transform: translateY(-50%) scale(1.1); /* Efeito de escala */
+}
+
+.prev-slide {
+    left: 15px; /* Mais afastado da borda */
+}
+
+.next-slide {
+    right: 15px; /* Mais afastado da borda */
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 15px; /* Mais afastado da borda */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px; /* Mais espaçamento entre os dots */
+}
+
+.dot {
+    width: 12px; /* Dots maiores */
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.4); /* Mais translúcido */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.dot.active {
+    background-color: #FACC15; /* Amarelo no dot ativo */
+    transform: scale(1.2); /* Dot ativo um pouco maior */
+}
+
+.dot:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+
+.about-text h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem; /* Título maior */
+}
+
+@media (min-width: 768px) {
+    .about-text h2 {
+        text-align: left;
+    }
+}
+
+.about-text p {
+    font-size: 1.1rem; /* Texto maior para melhor legibilidade */
+    line-height: 1.8; /* Mais espaçamento entre linhas */
+    color: #CBD5E0; /* Cor de texto mais suave */
+    margin-bottom: 1.2rem;
+}
+
+.about-text a {
+    color: #FACC15; /* Link amarelo */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.about-text a:hover {
+    color: #EAB308;
+    text-decoration: underline;
+}
+
+
+/* Seção de Serviços */
+.services-section {
+    width: 100%;
+    max-width: 1400px;
+    background-color: #1F2937;
+    padding: 3rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.services-section h2 {
+    text-align: center;
+    margin-bottom: 2.5rem; /* Mais espaçamento */
+    font-size: 2.5rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Layout mais flexível */
+    gap: 2rem; /* Mais espaçamento */
+}
+
+.service-card {
+    background-color: #374151; /* Medium Gray para os cartões */
+    padding: 2rem; /* Mais padding */
+    border-radius: 10px; /* Cantos arredondados */
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra mais suave */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Borda sutil */
+}
+
+.service-card:hover {
+    transform: translateY(-5px); /* Efeito de "levantar" no hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.service-card h3 {
+    color: #FACC15;
+    margin-bottom: 0.8rem;
+    font-size: 1.5rem; /* Título do serviço maior */
+}
+
+.service-card p {
+    color: #CBD5E0;
+    font-size: 1rem;
+}
+
+/* Container principal do agendamento */
+.appointment-section {
+    width: 100%;
+    max-width: 1400px;
+    background-color: #1F2937;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    margin-bottom: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.appointment-page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* Mais espaçamento */
+    max-width: 1000px; /* Ajustado para o layout interno */
+    width: 100%;
+    margin: 0 auto; /* Centraliza o container interno */
+}
+
+@media (min-width: 768px) {
+    .appointment-page-container {
+        flex-direction: row;
+    }
+}
+
+.calendar-section,
+.details-section {
+    flex: 1;
+    background-color: #1F2937; /* Mesma cor de fundo da seção principal */
+    padding: 2rem; /* Mais padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.calendar-section h2,
+.details-section h2 {
+    text-align: center;
+    font-size: 2.2rem; /* Títulos maiores */
+    margin-bottom: 1.5rem;
+}
+
+/* Navegação do calendário */
+.calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    background-color: #374151; /* Medium Gray */
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-navigation .nav-button {
+    background-color: #FACC15; /* Amarelo vibrante */
+    color: #121212; /* Texto escuro */
+    padding: 0.5rem 1rem;
+    border-radius: 9999px; /* Totalmente arredondado */
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem; /* Tamanho da fonte */
+    font-weight: 700; /* Negrito */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(252, 204, 21, 0.2);
+}
+
+.calendar-navigation .nav-button:hover {
+    background-color: #EAB308; /* Amarelo um pouco mais escuro no hover */
+    transform: translateY(-1px); /* Leve efeito de "levantar" */
+    box-shadow: 0 3px 8px rgba(252, 204, 21, 0.3);
+}
+
+.calendar-navigation span {
+    font-size: 1.2rem; /* Tamanho da fonte do mês/ano */
+    font-weight: 600;
+    color: #E5E7EB; /* Texto claro */
+}
+
+
+/* Grid do calendário */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 colunas para os dias da semana */
+    gap: 0.5rem;
+    text-align: center;
+    background-color: #374151; /* Medium Gray para o fundo do calendário */
+    padding: 1rem;
+    border-radius: 8px;
+    grid-auto-rows: 1fr; /* Garante que as linhas tenham altura igual */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Sombra interna sutil */
+}
+
+.calendar-grid div { /* Estilo para os cabeçalhos dos dias da semana */
+    font-weight: 700;
+    color: #9CA3AF; /* text-gray-400 */
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
+}
+
+.calendar-grid .calendar-day {
+    padding: 0.75rem 0.25rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px; /* Garante altura mínima para cada célula */
+}
+
+/* Estilos para os dias do calendário */
+.calendar-grid .calendar-day.bg-gray-800 { /* Dias passados ou não disponíveis */
+    background-color: #1F2937; /* Darker Gray */
+    color: #6B7280; /* text-gray-500 */
+    cursor: not-allowed;
+}
+
+.calendar-grid .calendar-day.available-day { /* Dias disponíveis */
+    background-color: #10B981; /* bg-green-500 */
+    color: #121212; /* text-black */
+    font-weight: 700;
+}
+
+.calendar-grid .calendar-day.available-day:hover {
+    background-color: #059669; /* hover:bg-green-600 */
+    color: white;
+}
+
+.calendar-grid .calendar-day.selected { /* Dia selecionado */
+    background-color: #3B82F6; /* bg-blue-600 */
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 0 0 2px #3B82F6; /* Outline */
+}
+
+.calendar-grid .calendar-day.today-marker { /* Marcador para o dia atual */
+    border: 2px solid #FACC15; /* yellow-400 */
+}
+
+/* Seção de horários disponíveis */
+.available-times-section {
+    margin-top: 1.5rem;
+    background-color: #1F2937; /* bg-gray-800 */
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.available-times-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+#available-times-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+#available-times-list button {
+    background-color: #374151; /* Medium Gray */
+    color: #E5E7EB; /* Text Light */
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1rem;
+}
+
+#available-times-list button:hover {
+    background-color: #FACC15; /* hover:bg-yellow-400 */
+    color: #121212; /* hover:text-black */
+}
+
+#available-times-list button.selected-time {
+    background-color: #FACC15; /* bg-yellow-400 */
+    color: #121212; /* text-black */
+    font-weight: 600;
+}
+
+/* Formulário de agendamento */
+.form-group {
+    margin-bottom: 1.5rem; /* Mais espaçamento entre campos */
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.95rem; /* Fonte um pouco maior */
+    color: #CBD5E0; /* Cor de texto mais suave */
+    font-weight: 600; /* Mais negrito */
+    margin-bottom: 0.6rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.9rem 1.2rem; /* Padding maior */
+    border-radius: 0.6rem; /* Mais arredondado */
+    border: 1px solid #4B5563; /* Borda mais visível */
+    background-color: #374151; /* Medium Gray para inputs */
+    color: #E5E7EB;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #FACC15; /* Borda amarela no foco */
+    box-shadow: 0 0 0 3px rgba(252, 204, 21, 0.3); /* Sombra amarela no foco */
+    background-color: #4B5563; /* Levemente mais claro no foco */
+}
+
+/* Botão de confirmar agendamento */
+#confirm-appointment-button {
+    background-color: #FACC15;
+    color: #121212;
+    padding: 1.2rem 2.5rem;
+    border-radius: 9999px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-top: 2rem; /* Mais espaçamento */
+    box-shadow: 0 5px 15px rgba(252, 204, 21, 0.4);
+}
+
+#confirm-appointment-button:hover {
+    background-color: #EAB308;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(252, 204, 21, 0.5);
+}
+
+/* Mensagens de feedback */
+#appointment-message {
+    font-size: 1.1rem; /* Fonte maior */
+    margin-top: 1.5rem;
+    font-weight: 600;
+}
+
+.text-green-500 {
+    color: #10B981; /* Verde de sucesso */
+}
+
+.text-red-500 {
+    color: #EF4444; /* Vermelho de erro */
+}
+
+.text-gray-400 {
+    color: #9CA3AF; /* Cinza para texto mutado */
+}
+
+/* Estilo para inputs ocultos */
+input[type="hidden"] {
+    display: none;
+}
+
+/* Footer */
+.main-footer {
+    width: 100%;
+    max-width: 1400px;
+    background-color: #1F2937;
+    padding: 2rem; /* Mais padding */
+    border-radius: 12px;
+    text-align: center;
+    color: #9CA3AF; /* Texto mais suave */
+    font-size: 0.95rem;
+    margin-top: 3rem;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Responsividade geral */
+@media (max-width: 767px) {
+    .main-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 0; /* Remove arredondamento em telas pequenas */
+    }
+    .main-header .logo img {
+        height: 35px;
+    }
+    .main-header .logo span {
+        font-size: 1.4rem;
+    }
+    .main-nav {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.8rem;
+    }
+    .main-nav .login-btn,
+    .main-nav .book-now-btn {
+        width: 80%; /* Botões menores em telas pequenas */
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+    .hero-section {
+        height: 300px; /* Altura menor para o banner */
+        margin-bottom: 2rem;
+        border-radius: 8px;
+    }
+    .hero-content {
+        padding: 1.5rem;
+    }
+    .hero-title {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+    }
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    .hero-button {
+        padding: 0.9rem 1.8rem;
+        font-size: 1rem;
+    }
+    .about-us-section,
+    .services-section,
+    .appointment-section {
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+    }
+    .about-content {
+        gap: 2rem;
+    }
+    .about-text h2 {
+        font-size: 2rem;
+    }
+    .about-text p {
+        font-size: 0.95rem;
+    }
+    .slider-container {
+        max-width: 100%; /* Ocupa toda a largura disponível */
+        height: 250px; /* Altura menor para o slider */
+        border-radius: 8px;
+    }
+    .slider-image {
+        height: 250px;
+    }
+    .slider-button {
+        padding: 8px 12px;
+        font-size: 1.2rem;
+    }
+    .slider-dots {
+        bottom: 8px;
+        gap: 6px;
+    }
+    .dot {
+        width: 8px;
+        height: 8px;
+    }
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .service-card {
+        padding: 1.5rem;
+    }
+    .service-card h3 {
+        font-size: 1.3rem;
+    }
+    .appointment-page-container {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    .calendar-section,
+    .details-section {
+        padding: 1.2rem;
+        border-radius: 8px;
+    }
+    .calendar-section h2,
+    .details-section h2 {
+        font-size: 1.8rem;
+    }
+    .calendar-navigation span {
+        font-size: 1rem;
+    }
+    #available-times-list button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    #confirm-appointment-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    .main-footer {
+        padding: 1rem;
+        margin-top: 1.5rem;
+        border-radius: 8px;
+    }
+}

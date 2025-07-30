@@ -1,17 +1,29 @@
 // backend/routes/barbers.js
 const express = require('express');
 const router = express.Router();
-const barbersController = require('../controllers/barbersController');
-const authMiddleware = require('../middleware/authMiddleware'); // Apenas importado, usado em POST/DELETE
+const barberController = require('../controllers/barbersController'); // Certifique-se do nome correto do arquivo
+const authMiddleware = require('../middleware/authMiddleware'); // Middleware de autenticação
 
-// Rota para obter todos os barbeiros (SEM authMiddleware)
-router.get('/', barbersController.getAllBarbers);
+// Rotas para o Dashboard do Barbeiro (protegidas por autenticação)
+router.get('/dashboard-stats', authMiddleware, barberController.getDashboardStats);
+router.get('/appointments', authMiddleware, barberController.getAppointmentsByDate);
+// Rota para atualizar o status de um agendamento
+router.put('/appointments/:appointmentId/status', authMiddleware, barberController.updateAppointmentStatus);
+// Rota para definir/atualizar os dias de disponibilidade do barbeiro
+router.post('/available-days', authMiddleware, barberController.setAvailableDays);
 
-// Rota para obter os dias disponíveis de um barbeiro específico (SEM authMiddleware)
-router.get('/:barberId/available-days', barbersController.getAvailableDays);
 
-// Rotas para adicionar/remover dias disponíveis (COM authMiddleware, pois altera dados)
-router.post('/:barberId/available-days', authMiddleware, barbersController.addAvailableDay);
-router.delete('/:barberId/available-days/:date', authMiddleware, barbersController.removeAvailableDay);
+// Rotas para a Tela de Agendamento do Cliente (podem não precisar de autenticação JWT, dependendo da sua lógica)
+// Rota para obter dias de disponibilidade de um barbeiro (para o barbeiro marcar no dashboard)
+router.get('/:barberId/available-days', barberController.getAvailableDays);
+// NOVA ROTA: Rota para obter horários disponíveis para agendamento de um barbeiro em uma data específica
+router.get('/:barberId/available-slots', barberController.getAvailableTimeSlots);
+
+
+// Rota para obter a lista de barbeiros (para o cliente selecionar)
+router.get('/list', barberController.getBarbers);
+
+// Rota para criar um novo agendamento (cliente enviando os dados)
+router.post('/book', barberController.createAppointment);
 
 module.exports = router;

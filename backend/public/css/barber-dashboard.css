@@ -1,0 +1,516 @@
+/* public/css/barber-dashboard.css */
+
+/* Importa a fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap'); /* Adicionado peso 800 para títulos */
+
+/* Color Palette Reference (Adjusted for Modern Dark Theme) */
+/* Primary Background: #121212 (Almost Black) */
+/* Secondary Background: #1F2937 (Dark Gray - for sections/cards) */
+/* Tertiary Background: #374151 (Medium Gray - for inner elements like calendar days, input fields) */
+/* Accent Yellow: #FACC15 (Brighter, more vibrant yellow) */
+/* Text Light: #E5E7EB (Off-white for main text) */
+/* Text Muted: #9CA3AF (Subtle gray for secondary text/placeholders) */
+/* Green Success: #10B981 */
+/* Red Error: #EF4444 */
+/* Blue Selected: #3B82F6 */
+/* Indigo Buttons: #6366F1 */
+
+
+/* Estilos globais e resets */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #121212; /* Fundo principal mais escuro */
+    color: #E5E7EB; /* Texto principal mais claro */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center; /* Centraliza o conteúdo horizontalmente */
+    justify-content: flex-start; /* Alinha o conteúdo ao topo */
+    padding: 0; /* Remover padding global, gerenciar por seções */
+    overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
+h1, h2, h3 {
+    color: #FACC15; /* Amarelo vibrante para títulos */
+    font-weight: 800; /* Mais negrito para impacto */
+    margin-bottom: 1rem; /* Espaçamento padrão para títulos */
+}
+
+/* Header Principal */
+.main-header {
+    background-color: #1F2937; /* Dark Gray para o cabeçalho */
+    padding: 1.25rem 2rem; /* Aumentado o padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada */
+    border-bottom-left-radius: 12px; /* Cantos mais arredondados */
+    border-bottom-right-radius: 12px;
+    width: 100%;
+    max-width: 1400px; /* Aumentado max-width para telas maiores */
+    margin-bottom: 2.5rem; /* Mais espaçamento */
+    z-index: 100; /* Garante que o header fique acima de outros elementos */
+    position: sticky; /* Fixa o header no topo */
+    top: 0;
+}
+
+.main-header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.main-header .logo img {
+    height: 48px; /* Logo um pouco maior */
+    margin-right: 12px;
+    border-radius: 12px; /* Mais arredondado */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.main-header .logo span {
+    font-size: 1.8rem; /* Fonte maior */
+    font-weight: 800;
+    color: #FACC15;
+    letter-spacing: 0.05em; /* Pequeno espaçamento entre letras */
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Mais espaçamento entre botões */
+}
+
+/* Estilo para o botão "Voltar ao Site" */
+.main-nav .login-btn { /* Reutilizando a classe login-btn para consistência */
+    background-color: #374151; /* Medium Gray */
+    color: #E5E7EB;
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: 1px solid #4B5563;
+}
+
+.main-nav .login-btn:hover {
+    background-color: #4B5563;
+    transform: translateY(-2px);
+}
+
+/* Estilo para o botão "Sair" */
+.main-nav .book-now-btn { /* Reutilizando a classe book-now-btn para consistência */
+    background-color: #FACC15;
+    color: #121212;
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(252, 204, 21, 0.3);
+}
+
+.main-nav .book-now-btn:hover {
+    background-color: #EAB308;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(252, 204, 21, 0.4);
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem; /* Espaçamento entre as seções */
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 20px; /* Padding horizontal para evitar que o conteúdo cole nas bordas */
+    margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+    .dashboard-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Layout responsivo com 3 colunas */
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 colunas fixas para desktop */
+    }
+}
+
+/* Seções do Dashboard (Cards) */
+.stats-section,
+.appointments-section,
+.availability-section {
+    background-color: #1F2937; /* Dark Gray */
+    padding: 2.5rem; /* Mais padding */
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.section-title {
+    font-size: 2.2rem; /* Títulos maiores */
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #FACC15;
+}
+
+.subsection-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #E5E7EB;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Estatísticas */
+.stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex-grow: 1; /* Permite que o grid de stats ocupe o espaço disponível */
+    justify-content: space-around; /* Distribui o espaço entre os cards de stat */
+}
+
+.stat-card {
+    background-color: #374151; /* Medium Gray */
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-title {
+    font-size: 1.2rem;
+    color: #CBD5E0;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 2.5rem; /* Valor maior */
+    font-weight: 800;
+    color: #FACC15;
+}
+
+/* Navegação do calendário */
+.calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    background-color: #374151; /* Medium Gray */
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-navigation .nav-button {
+    background-color: #FACC15; /* Amarelo vibrante */
+    color: #121212; /* Texto escuro */
+    padding: 0.5rem 1rem;
+    border-radius: 9999px; /* Totalmente arredondado */
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(252, 204, 21, 0.2);
+}
+
+.calendar-navigation .nav-button:hover {
+    background-color: #EAB308;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(252, 204, 21, 0.3);
+}
+
+.calendar-navigation span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #E5E7EB;
+}
+
+/* Grid do calendário */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 colunas para os dias da semana */
+    gap: 0.5rem;
+    text-align: center;
+    background-color: #374151; /* Medium Gray para o fundo do calendário */
+    padding: 1rem;
+    border-radius: 8px;
+    grid-auto-rows: 1fr; /* Garante que as linhas tenham altura igual */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Sombra interna sutil */
+}
+
+.calendar-grid div { /* Estilo para os cabeçalhos dos dias da semana */
+    font-weight: 700;
+    color: #9CA3AF; /* text-gray-400 */
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Borda sutil */
+}
+
+.calendar-grid .calendar-day,
+.calendar-grid .manage-calendar-day {
+    padding: 0.75rem 0.25rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px; /* Garante altura mínima para cada célula */
+}
+
+/* Estilos para os dias do calendário */
+.calendar-grid .calendar-day.bg-gray-800, /* Dias passados ou não disponíveis */
+.calendar-grid .manage-calendar-day.bg-gray-800 {
+    background-color: #1F2937; /* Darker Gray */
+    color: #6B7280; /* text-gray-500 */
+    cursor: not-allowed;
+}
+
+.calendar-grid .calendar-day.has-appointments { /* Dia com agendamentos */
+    background-color: #6366F1; /* Indigo para dias com agendamento */
+    color: white;
+    font-weight: 700;
+}
+
+.calendar-grid .calendar-day.has-appointments:hover {
+    background-color: #4F46E5; /* Indigo mais escuro no hover */
+}
+
+.calendar-grid .calendar-day.selected { /* Dia de agendamento selecionado */
+    background-color: #3B82F6; /* bg-blue-600 */
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 0 0 2px #3B82F6; /* Outline */
+}
+
+.calendar-grid .calendar-day.today-marker { /* Marcador para o dia atual */
+    border: 2px solid #FACC15; /* yellow-400 */
+}
+
+/* Lista de Agendamentos */
+.appointments-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+    flex-grow: 1; /* Permite que a lista ocupe o espaço disponível */
+}
+
+.appointments-list li {
+    background-color: #374151; /* Medium Gray */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.appointments-list li p {
+    margin: 0.2rem 0;
+}
+
+.appointments-list button {
+    background-color: #FACC15; /* Amarelo vibrante */
+    color: #121212;
+    padding: 0.4rem 0.8rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(252, 204, 21, 0.2);
+}
+
+.appointments-list button:hover:not([disabled]) {
+    background-color: #EAB308;
+    transform: translateY(-1px);
+}
+
+.appointments-list button.bg-gray-500 { /* Estilo para botões desabilitados */
+    background-color: #6B7280; /* Cinza mais escuro */
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.appointments-list button.bg-green-600 {
+    background-color: #10B981; /* Verde para concluído */
+    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
+}
+
+.appointments-list button.bg-red-600 {
+    background-color: #EF4444; /* Vermelho para cancelar */
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.2);
+}
+
+
+/* Gerenciar Disponibilidade */
+.manage-calendar-day.bg-blue-600 { /* Dia de disponibilidade selecionado */
+    background-color: #3B82F6; /* Mesma cor de seleção do calendário de agendamentos */
+    color: white;
+    font-weight: 700;
+}
+
+.manage-calendar-day.hover\:bg-yellow-500:hover {
+    background-color: #FACC15; /* Amarelo vibrante no hover */
+    color: #121212;
+}
+
+.available-days-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+    flex-grow: 1;
+}
+
+.available-days-list li {
+    background-color: #374151;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 0.6rem;
+    color: #E5E7EB;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.save-button {
+    background-color: #FACC15;
+    color: #121212;
+    padding: 1rem 2rem;
+    border-radius: 9999px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-top: 2rem;
+    box-shadow: 0 5px 15px rgba(252, 204, 21, 0.4);
+}
+
+.save-button:hover {
+    background-color: #EAB308;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(252, 204, 21, 0.5);
+}
+
+/* Footer */
+.main-footer {
+    width: 100%;
+    max-width: 1400px;
+    background-color: #1F2937;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    color: #9CA3AF;
+    font-size: 0.95rem;
+    margin-top: 3rem;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Responsividade */
+@media (max-width: 767px) {
+    .main-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 0;
+    }
+    .main-header .logo img {
+        height: 35px;
+    }
+    .main-header .logo span {
+        font-size: 1.4rem;
+    }
+    .main-nav {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.8rem;
+    }
+    .main-nav .login-btn,
+    .main-nav .book-now-btn {
+        width: 80%;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+    .dashboard-container {
+        gap: 1.5rem;
+        padding: 0 10px;
+    }
+    .stats-section,
+    .appointments-section,
+    .availability-section {
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+    .subsection-title {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    .stat-value {
+        font-size: 2rem;
+    }
+    .calendar-navigation {
+        padding: 0.5rem 0.8rem;
+    }
+    .calendar-navigation .nav-button {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.8rem;
+    }
+    .calendar-navigation span {
+        font-size: 1rem;
+    }
+    .calendar-grid {
+        gap: 0.3rem;
+        padding: 0.8rem;
+        border-radius: 6px;
+    }
+    .calendar-grid .calendar-day,
+    .calendar-grid .manage-calendar-day {
+        min-height: 35px;
+        font-size: 0.8rem;
+    }
+    .appointments-list li {
+        padding: 0.8rem;
+        margin-bottom: 0.6rem;
+    }
+    .appointments-list button {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+    }
+    .available-days-list li {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    .save-button {
+        padding: 0.9rem 1.8rem;
+        font-size: 1rem;
+        margin-top: 1.5rem;
+    }
+    .main-footer {
+        padding: 1rem;
+        margin-top: 1.5rem;
+        border-radius: 8px;
+    }
+}

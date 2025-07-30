@@ -1,53 +1,45 @@
-// backend/index.js
+// index.js
+require('dotenv').config(); // Certifique-se de carregar as variáveis de ambiente primeiro
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const path = require('path'); 
+const path = require('path');
+const cors = require('cors'); // Se você estiver usando CORS
+const admin = require('firebase-admin'); // Importe o Firebase Admin SDK
 
-const firebase = require('./config/firebase'); 
+// Importar rotas
 const authRoutes = require('./routes/auth');
-const barbersRoutes = require('./routes/barbers');
-const dashboardRoutes = require('./routes/dashboard');
-const appointmentsRoutes = require('./routes/appointments'); 
+const barberRoutes = require('./routes/barbers');
+
+// **Inicialização do Firebase Admin SDK**
+// Certifique-se de que o caminho para o arquivo de credenciais está correto
+// Corrigido o caminho para 'config/serviceAccountKey.json' conforme sua estrutura de pastas
+const serviceAccount = require('./config/serviceAccountKey.json'); // Caminho CORRETO para o seu arquivo JSON
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    // Se você estiver usando Realtime Database ou Cloud Storage, adicione databaseURL ou storageBucket
+    // databaseURL: "https://<YOUR_PROJECT_ID>.firebaseio.com"
+});
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors()); 
-app.use(bodyParser.json()); 
+// Middlewares
+app.use(cors()); // Use CORS se o frontend estiver em um domínio diferente
+app.use(express.json()); // Para parsear JSON no corpo das requisições
 
-// Esta linha deve estar no topo para servir arquivos estáticos
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Servir arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
 
-// Rotas da API
+// Usar rotas
 app.use('/api/auth', authRoutes);
-app.use('/api/barbers', barbersRoutes); 
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/appointments', appointmentsRoutes); 
+app.use('/api/barber', barberRoutes);
 
-// NENHUM app.use(authMiddleware) AQUI!
-
+// Rota de teste
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-});
-
-// REMOVA/COMENTE AS ROTAS REDUNDANTES para HTML:
-/*
-app.get('/barber-dashboard.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'barber-dashboard.html'));
-});
-
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-*/
-
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Algo deu errado no servidor!');
+    res.send('Backend da Barbearia 115 está rodando!');
 });
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
 });
