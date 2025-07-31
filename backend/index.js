@@ -14,6 +14,25 @@ const barberRoutes = require('./routes/barbers');
 // Corrigido o caminho para 'config/serviceAccountKey.json' conforme sua estrutura de pastas
 const serviceAccount = require('./config/serviceAccountKey.json'); // Caminho CORRETO para o seu arquivo JSON
 
+const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+
+if (serviceAccountBase64) {
+    try {
+        const serviceAccount = JSON.parse(Buffer.from(serviceAccountBase64, 'base64').toString('utf8'));
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
+    } catch (error) {
+        console.error('Erro ao inicializar Firebase Admin SDK a partir da variável de ambiente:', error);
+        // Considere sair do processo se a inicialização do Firebase for crítica
+        // process.exit(1);
+    }
+} else {
+    console.warn('Variável de ambiente FIREBASE_SERVICE_ACCOUNT_BASE64 não encontrada. Firebase Admin SDK não inicializado.');
+    // Se o Firebase Admin SDK for essencial, você pode querer lançar um erro ou sair aqui.
+}
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     // Se você estiver usando Realtime Database ou Cloud Storage, adicione databaseURL ou storageBucket
