@@ -1,7 +1,8 @@
 // public/js/script.js
 
 // URL base do seu backend
-const API_BASE_URL = 'http://localhost:3001/api';
+//const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'https://meu-backend-barbearia.onrender.com/api';
 
 // Elementos do DOM
 const calendarGrid = document.getElementById('calendar-grid');
