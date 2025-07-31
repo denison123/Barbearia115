@@ -22,14 +22,13 @@ body {
     background-color: #121212; /* Fundo principal mais escuro */
     color: #E5E7EB; /* Texto principal mais claro */
     margin: 0;
-    padding: 0;
+    padding: 0; /* Removido padding global, será gerenciado por seções */
     line-height: 1.6;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     align-items: center; /* Centraliza o conteúdo horizontalmente */
     justify-content: flex-start; /* Alinha o conteúdo ao topo */
-    padding: 0; /* Remover padding global, gerenciar por seções */
     overflow-x: hidden; /* Evita rolagem horizontal indesejada */
 }
 
@@ -50,7 +49,7 @@ h1, h2, h3 {
     border-bottom-left-radius: 12px; /* Cantos mais arredondados */
     border-bottom-right-radius: 12px;
     width: 100%;
-    max-width: 1400px; /* Aumentado max-width para telas maiores */
+    max-width: 1600px; /* Aumentado max-width para telas maiores */
     margin-bottom: 2.5rem; /* Mais espaçamento */
     z-index: 100; /* Garante que o header fique acima de outros elementos */
     position: sticky; /* Fixa o header no topo */
@@ -123,7 +122,7 @@ h1, h2, h3 {
     background-size: cover;
     background-position: center;
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px; /* Aumentado max-width */
     height: 500px; /* Altura do banner aumentada */
     display: flex;
     align-items: center;
@@ -192,7 +191,7 @@ h1, h2, h3 {
 /* Seção Sobre Nós */
 .about-us-section {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px; /* Aumentado max-width */
     background-color: #1F2937; /* Dark Gray */
     padding: 3rem; /* Mais padding */
     border-radius: 12px;
@@ -338,7 +337,7 @@ h1, h2, h3 {
 /* Seção de Serviços */
 .services-section {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px; /* Aumentado max-width */
     background-color: #1F2937;
     padding: 3rem;
     border-radius: 12px;
@@ -388,7 +387,7 @@ h1, h2, h3 {
 /* Container principal do agendamento */
 .appointment-section {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px; /* Aumentado max-width */
     background-color: #1F2937;
     padding: 3rem;
     border-radius: 12px;
@@ -654,12 +653,12 @@ input[type="hidden"] {
 /* Footer */
 .main-footer {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px; /* Aumentado max-width */
     background-color: #1F2937;
-    padding: 2rem; /* Mais padding */
+    padding: 2rem;
     border-radius: 12px;
     text-align: center;
-    color: #9CA3AF; /* Texto mais suave */
+    color: #9CA3AF;
     font-size: 0.95rem;
     margin-top: 3rem;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);

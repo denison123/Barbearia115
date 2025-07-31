@@ -215,14 +215,15 @@ h1, h2, h3 {
 .calendar-navigation .nav-button {
     background-color: #FACC15; /* Amarelo vibrante */
     color: #121212; /* Texto escuro */
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem; /* Ajustado o padding para caber o texto */
     border-radius: 9999px; /* Totalmente arredondado */
     border: none;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Diminuído o tamanho da fonte */
     font-weight: 700;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 2px 5px rgba(252, 204, 21, 0.2);
+    white-space: nowrap; /* Garante que o texto não quebre linha */
 }
 
 .calendar-navigation .nav-button:hover {
@@ -232,9 +233,10 @@ h1, h2, h3 {
 }
 
 .calendar-navigation span {
-    font-size: 1.2rem;
+    font-size: 1rem; /* Diminuído o tamanho da fonte */
     font-weight: 600;
     color: #E5E7EB;
+    white-space: nowrap; /* Garante que o texto não quebre linha */
 }
 
 /* Grid do calendário */
