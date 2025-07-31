@@ -1,7 +1,6 @@
 // public/js/script.js
 
 // URL base do seu backend
-//const API_BASE_URL = 'http://localhost:3001/api';
 const API_BASE_URL = 'https://barbearia-backend-9h50.onrender.com/api';
 
 // Elementos do DOM
