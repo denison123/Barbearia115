@@ -1,4 +1,13 @@
 // backend/controllers/barbersController.js
+// Importa o módulo 'path' para ajudar com caminhos de arquivos.
+const path = require('path');
+
+// Log de depuração para verificar o caminho.
+// __dirname é a pasta atual (backend/controllers).
+// O require tenta aceder a '../../firebase.js', o que deveria ser a raiz do projeto.
+console.log('Pasta atual:', __dirname);
+console.log('Tentando aceder ao módulo em:', path.join(__dirname, '../../firebase'));
+
 // O caminho abaixo é o mais provável se a estrutura for:
 // - projeto/
 //   - backend/
@@ -6,16 +15,6 @@
 //       - barbersController.js
 //   - firebase.js
 const { db } = require('../../firebase');
-
-// Se o caminho acima não funcionar, comente a linha anterior e
-// descomente uma das opções abaixo, dependendo da sua estrutura:
-
-// Opção 1: Se o firebase.js estiver diretamente na pasta 'backend'
-// const { db } = require('../firebase');
-
-// Opção 2: Se o firebase.js estiver na mesma pasta 'controllers'
-// const { db } = require('./firebase');
-
 
 const { getFirestore } = require('firebase-admin/firestore');
 
