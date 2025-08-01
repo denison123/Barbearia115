@@ -1,15 +1,9 @@
 // backend/controllers/barbersController.js
-// O caminho abaixo é o mais provável se a estrutura for:
-// - projeto/
-//   - backend/
-//     - controllers/
-//       - barbersController.js
-//   - firebase.js
-import { db } from '../../firebase.js';
 
-// Caso o caminho acima não funcione, tente com os seguintes caminhos:
-// import { db } from '../firebase.js';
-// import { db } from './firebase.js';
+// Importa o módulo 'db' do firebase.js, que agora está na pasta 'config'
+// O caminho correto é um nível acima do 'controllers' (pasta 'backend'),
+// outro nível acima (pasta raiz do projeto) e depois dentro de 'config'.
+const { db } = require('../../config/firebase');
 
 // Adicionando um '.js' no final do nome do arquivo.
 // Em ambientes Node.js modernos, é comum precisar adicionar a extensão do arquivo.
