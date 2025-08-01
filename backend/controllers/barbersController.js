@@ -1,12 +1,7 @@
 // backend/controllers/barbersController.js
 
-// Importa o módulo 'db' do firebase.js, que agora está na pasta 'config'
-// O caminho correto é um nível acima do 'controllers' (pasta 'backend'),
-// outro nível acima (pasta raiz do projeto) e depois dentro de 'config'.
-const { db } = require('../../config/firebase');
-
-// Adicionando um '.js' no final do nome do arquivo.
-// Em ambientes Node.js modernos, é comum precisar adicionar a extensão do arquivo.
+// O caminho está correto para acessar 'firebase.js' a partir de 'barbersController.js'
+const { db } = require('../config/firebase');
 
 const { getFirestore } = require('firebase-admin/firestore');
 
