@@ -1,34 +1,37 @@
 // backend/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-    // Obtenha o token do header da requisição
-    const authHeader = req.headers['authorization'];
-    if (!authHeader) {
-        console.warn('[Backend Auth] Acesso negado: Nenhum token fornecido.');
-        return res.status(401).json({ message: 'Acesso negado: Nenhum token fornecido.' });
+const authMiddleware = (req, res, next) => {
+    // Verifique se o cabeçalho de autorização está presente
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        console.log('Acesso negado: Cabeçalho de Autorização ausente ou mal formatado.');
+        return res.status(401).json({ message: 'Acesso negado. Token não fornecido.' });
     }
 
-    const token = authHeader.split(' ')[1]; // Espera "Bearer TOKEN"
-
-    if (!token) {
-        console.warn('[Backend Auth] Acesso negado: Token mal formatado.');
-        return res.status(401).json({ message: 'Acesso negado: Token mal formatado.' });
-    }
+    // Extraia o token do cabeçalho "Bearer <token>"
+    const token = authHeader.split(' ')[1];
 
     try {
-        // Use process.env.JWT_SECRET aqui
+        // Verifique se o segredo JWT está definido
+        if (!process.env.JWT_SECRET) {
+            console.error('ERRO CRÍTICO: Variável de ambiente JWT_SECRET não definida.');
+            return res.status(500).json({ message: 'Erro no servidor: segredo de autenticação não configurado.' });
+        }
+
+        // Verifique o token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Adiciona os dados do usuário decodificados à requisição
-        next(); // Prossegue para a próxima rota/middleware
+        
+        // Adicione o payload do token à requisição para uso nas rotas
+        req.user = decoded; 
+        console.log('Autenticação bem-sucedida para o usuário:', req.user.id);
+        next(); // Continue para o próximo middleware/rota
     } catch (error) {
-        console.error('Erro na verificação do token:', error.message);
-        // Log detalhado para depuração
-        // if (error.name === 'TokenExpiredError') {
-        //     return res.status(401).json({ message: 'Token expirado.' });
-        // } else if (error.name === 'JsonWebTokenError') {
-        //     return res.status(401).json({ message: 'Token inválido.' });
-        // }
+        // Se o token for inválido, expire, ou houver outro erro de verificação
+        console.log('Falha na autenticação: Token inválido ou expirado.', error.message);
         return res.status(401).json({ message: 'Token inválido ou expirado.' });
     }
 };
+
+module.exports = authMiddleware;
