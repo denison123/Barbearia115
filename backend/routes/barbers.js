@@ -1,12 +1,8 @@
 // backend/routes/barbers.js
 const express = require('express');
 const router = express.Router();
-const cors = require('cors'); // Importe o middleware CORS aqui
 const barberController = require('../controllers/barbersController');
 const authMiddleware = require('../middleware/authMiddleware');
-
-// Aplicar CORS especificamente a este router
-router.use(cors());
 
 // Rotas para o Dashboard do Barbeiro (protegidas por autenticação)
 router.get('/dashboard-stats', authMiddleware, barberController.getDashboardStats);

@@ -26,23 +26,24 @@ if (serviceAccountBase64) {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- MIDDLEWARE CORS CUSTOMIZADO (SOLUÇÃO ROBUSTA) ---
-// Adiciona os cabeçalhos CORS manualmente para garantir que funcionem.
-// Você pode substituir '*' pelo URL do seu frontend em produção, como 'https://barbearia-frontend-9h56.onrender.com'
+// --- Middlewares CORS (Solução Definitiva) ---
+// Middleware para lidar com as requisições de pré-voo (OPTIONS)
 app.use((req, res, next) => {
+    // Definir os cabeçalhos CORS para permitir acesso de qualquer origem
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
-    // Responde a requisições OPTIONS imediatamente
+
+    // Se a requisição for do tipo OPTIONS, respondemos com status 200 e terminamos o fluxo
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
     }
     
+    // Se não for uma requisição OPTIONS, continuamos para o próximo middleware/rota
     next();
 });
 
-// Middlewares
+// Middlewares para análise do corpo da requisição
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
