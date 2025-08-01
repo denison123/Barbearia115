@@ -1,16 +1,29 @@
 // backend/controllers/barbersController.js
-const { db } = require('../firebase');
-const admin = require('firebase-admin');
+// O caminho abaixo é o mais provável se a estrutura for:
+// - projeto/
+//   - backend/
+//     - controllers/
+//       - barbersController.js
+//   - firebase.js
+const { db } = require('../../firebase');
+
+// Se o caminho acima não funcionar, comente a linha anterior e
+// descomente uma das opções abaixo, dependendo da sua estrutura:
+
+// Opção 1: Se o firebase.js estiver diretamente na pasta 'backend'
+// const { db } = require('../firebase');
+
+// Opção 2: Se o firebase.js estiver na mesma pasta 'controllers'
+// const { db } = require('./firebase');
+
+
 const { getFirestore } = require('firebase-admin/firestore');
 
 const barbersController = {
-    // Rota para obter estatísticas do dashboard
     getDashboardStats: async (req, res) => {
         try {
-            // O authMiddleware adiciona a informação do usuário em req.user
             const barberId = req.user.id;
             
-            // Verifique se o barberId está presente
             if (!barberId) {
                 console.error('getDashboardStats: barberId não encontrado na requisição.');
                 return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
@@ -23,10 +36,6 @@ const barbersController = {
             const q = collectionRef.where('barberId', '==', barberId);
             const querySnapshot = await q.get();
 
-            // Simular dados de estatísticas para testes. Você precisará de implementar a lógica de agregação.
-            // Por exemplo, iterar sobre `querySnapshot.docs` para contar cortes realizados, pendentes, etc.
-            
-            // Exemplo de como poderiam ser calculados os totais:
             let completedAppointments = 0;
             let pendingAppointments = 0;
             let cancelledAppointments = 0;
@@ -48,7 +57,6 @@ const barbersController = {
                     cortesPendentes: pendingAppointments,
                     cortesCancelados: cancelledAppointments,
                 },
-                // Poderia adicionar outras estatísticas aqui
             };
             
             console.log('Estatísticas encontradas:', stats.monthly);
@@ -60,9 +68,7 @@ const barbersController = {
         }
     },
     
-    // ... (outras funções do seu controlador como setAvailability)
     setAvailability: async (req, res) => {
-        // Exemplo da sua lógica existente...
         try {
             const barberId = req.user.id;
             const { availability } = req.body;
@@ -71,7 +77,6 @@ const barbersController = {
                 return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
             }
 
-            // Exemplo de como salvar no Firestore
             const firestore = getFirestore();
             const docRef = firestore.collection('barber_availability').doc(barberId);
             await docRef.set({ availability });
