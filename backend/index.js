@@ -27,7 +27,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // --- Middlewares CORS (Solução Definitiva) ---
-// Middleware para lidar com as requisições de pré-voo (OPTIONS)
+// Middleware para lidar com todas as requisições de pré-voo (OPTIONS) e definir os cabeçalhos CORS
 app.use((req, res, next) => {
     // Definir os cabeçalhos CORS para permitir acesso de qualquer origem
     res.header('Access-Control-Allow-Origin', '*');
@@ -36,6 +36,7 @@ app.use((req, res, next) => {
 
     // Se a requisição for do tipo OPTIONS, respondemos com status 200 e terminamos o fluxo
     if (req.method === 'OPTIONS') {
+        console.log('Requisição OPTIONS recebida, respondendo com 200 OK.');
         return res.sendStatus(200);
     }
     
