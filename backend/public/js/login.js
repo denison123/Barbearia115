@@ -1,8 +1,11 @@
 // js/login.js
 
 // URL base do seu backend
+//
+// A URL do seu backend no Render é: https://barbearia-backend-9h56.onrender.com/api
+//
 // Certifique-se de que esta URL corresponde ao endereço do seu servidor Express
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Seleciona o formulário de login e o elemento para exibir mensagens
