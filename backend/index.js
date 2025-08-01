@@ -1,42 +1,46 @@
 // index.js
-require('dotenv').config(); // Para desenvolvimento local, Render ignora isso em produção
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
-const admin = require('firebase-admin'); // Importe o Firebase Admin SDK
+const admin = require('firebase-admin');
 
-// --- INICIALIZAÇÃO CORRETA DO FIREBASE ADMIN SDK ---
+// --- INICIALIZAÇÃO DO FIREBASE ADMIN SDK ---
 const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
 
 if (serviceAccountBase64) {
-    try {
-        const serviceAccount = JSON.parse(Buffer.from(serviceAccountBase64, 'base64').toString('utf8'));
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
-    } catch (error) {
-        console.error('ERRO CRÍTICO: Falha ao inicializar Firebase Admin SDK a partir da variável de ambiente:', error);
-        process.exit(1);
-    }
+    try {
+        const serviceAccount = JSON.parse(Buffer.from(serviceAccountBase64, 'base64').toString('utf8'));
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
+    } catch (error) {
+        console.error('ERRO CRÍTICO: Falha ao inicializar Firebase Admin SDK a partir da variável de ambiente:', error);
+        process.exit(1);
+    }
 } else {
-    console.error('ERRO CRÍTICO: Variável de ambiente FIREBASE_SERVICE_ACCOUNT_BASE64 não encontrada. Firebase Admin SDK NÃO inicializado.');
-    process.exit(1);
+    console.error('ERRO CRÍTICO: Variável de ambiente FIREBASE_SERVICE_ACCOUNT_BASE64 não encontrada. Firebase Admin SDK NÃO inicializado.');
+    process.exit(1);
 }
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- CONFIGURAÇÃO EXPLÍCITA DO CORS ---
-// Adicione o URL do seu frontend para permitir requisições apenas dele.
-// Substitua 'https://barbearia-frontend-9h56.onrender.com' pelo seu domínio de frontend.
-const corsOptions = {
-    origin: '*', // Se o seu frontend estiver no mesmo domínio do backend, você pode usar o domínio do frontend aqui. Para teste, '*' funciona.
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-};
-
-app.use(cors(corsOptions));
+// --- MIDDLEWARE CORS CUSTOMIZADO (SOLUÇÃO ROBUSTA) ---
+// Adiciona os cabeçalhos CORS manualmente para garantir que funcionem.
+// Você pode substituir '*' pelo URL do seu frontend em produção, como 'https://barbearia-frontend-9h56.onrender.com'
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    // Responde a requisições OPTIONS imediatamente
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    
+    next();
+});
 
 // Middlewares
 app.use(express.json());
@@ -56,9 +60,9 @@ app.use('/api/barber', barberRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {
-    res.send('Backend da Barbearia 115 está rodando!');
+    res.send('Backend da Barbearia 115 está rodando!');
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
