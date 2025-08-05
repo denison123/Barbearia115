@@ -5,7 +5,8 @@ const path = require('path');
 const admin = require('firebase-admin');
 
 // --- INICIALIZAÇÃO DO FIREBASE ADMIN SDK ---
-const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+// CORREÇÃO: Usando a variável de ambiente JWT_SECRET conforme solicitado.
+const serviceAccountBase64 = process.env.JWT_SECRET;
 
 if (serviceAccountBase64) {
     try {
@@ -19,7 +20,8 @@ if (serviceAccountBase64) {
         process.exit(1);
     }
 } else {
-    console.error('ERRO CRÍTICO: Variável de ambiente FIREBASE_SERVICE_ACCOUNT_BASE64 não encontrada. Firebase Admin SDK NÃO inicializado.');
+    // A mensagem de erro também foi atualizada para refletir a nova variável.
+    console.error('ERRO CRÍTICO: Variável de ambiente JWT_SECRET não encontrada. Firebase Admin SDK NÃO inicializado.');
     process.exit(1);
 }
 
