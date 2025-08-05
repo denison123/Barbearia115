@@ -6,7 +6,7 @@
     'use strict';
 
     // URL base do seu backend
-    const API_BASE_URL = 'https://barbearia-backend-9h50.onrender.com/api';
+    const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com'; // <-- Esta deve ser a URL correta!
 
     // Elementos do DOM
     const calendarGrid = document.getElementById('calendar-grid');
