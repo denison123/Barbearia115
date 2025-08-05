@@ -1,7 +1,7 @@
 // public/js/barber-dashboard.js
 
 // URL base do seu backend
-const API_BASE_URL = 'https://barbearia-backend-9h50.onrender.com/api';
+const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com';
 
 // Função para formatar datas para o formato YYYY-MM-DD
 function formatDate(date) {
