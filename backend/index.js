@@ -2,28 +2,13 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const admin = require('firebase-admin');
+// Não precisamos mais do 'admin' aqui, pois a inicialização será feita em firebase.js
+// const admin = require('firebase-admin');
 
-// --- INICIALIZAÇÃO DO FIREBASE ADMIN SDK ---
-// CORREÇÃO: Usando a variável de ambiente JWT_SECRET conforme solicitado.
-const serviceAccountBase64 = process.env.JWT_SECRET;
-
-if (serviceAccountBase64) {
-    try {
-        const serviceAccount = JSON.parse(Buffer.from(serviceAccountBase64, 'base64').toString('utf8'));
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
-    } catch (error) {
-        console.error('ERRO CRÍTICO: Falha ao inicializar Firebase Admin SDK a partir da variável de ambiente:', error);
-        process.exit(1);
-    }
-} else {
-    // A mensagem de erro também foi atualizada para refletir a nova variável.
-    console.error('ERRO CRÍTICO: Variável de ambiente JWT_SECRET não encontrada. Firebase Admin SDK NÃO inicializado.');
-    process.exit(1);
-}
+// --- GARANTA QUE O FIREBASE ADMIN SDK SEJA INICIALIZADO ---
+// Apenas importe o arquivo de configuração do Firebase para garantir que ele seja executado
+// e o SDK seja inicializado.
+require('./config/firebase'); // Isso irá executar o código em firebase.js
 
 const app = express();
 const PORT = process.env.PORT || 3001;
