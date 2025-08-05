@@ -80,29 +80,37 @@ exports.setAvailableDays = async (req, res) => {
     }
 };
 
-// --- STUBS PARA FUNÇÕES FALTANTES ---
-// Você precisará implementar a lógica para cada uma dessas funções.
-// Elas estão aqui para que as rotas em barbers.js não apontem para 'undefined'.
-
-exports.getAppointmentsByDate = async (req, res) => {
-    console.log('STUB: getAppointmentsByDate chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
-};
-
-exports.updateAppointmentStatus = async (req, res) => {
-    console.log('STUB: updateAppointmentStatus chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
-};
-
+// Implementação da função para obter os dias de disponibilidade de um barbeiro
 exports.getAvailableDays = async (req, res) => {
-    console.log('STUB: getAvailableDays chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+    console.log('[getAvailableDays] Buscando dias disponíveis...');
+    try {
+        const { barberId } = req.params; // Obtém o ID do barbeiro dos parâmetros da URL
+
+        if (!barberId) {
+            console.error('getAvailableDays: ID do barbeiro não fornecido na requisição.');
+            return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
+        }
+
+        const firestore = getFirestore();
+        // Busca a disponibilidade na subcoleção 'availability' do documento do barbeiro
+        const docRef = firestore.collection('barbers').doc(barberId).collection('availability').doc('current');
+        const docSnapshot = await docRef.get();
+
+        if (docSnapshot.exists) {
+            const data = docSnapshot.data();
+            const availableDays = data.days || []; // Retorna o array de dias ou um array vazio
+            console.log(`[getAvailableDays] Dias disponíveis para ${barberId}:`, availableDays);
+            return res.status(200).json(availableDays);
+        } else {
+            console.log(`[getAvailableDays] Nenhum dia de disponibilidade encontrado para o barbeiro ${barberId}.`);
+            return res.status(200).json([]); // Retorna um array vazio se o documento não existir
+        }
+    } catch (error) {
+        console.error('Erro ao buscar dias disponíveis:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor ao buscar dias disponíveis.' });
+    }
 };
 
-exports.getAvailableTimeSlots = async (req, res) => {
-    console.log('STUB: getAvailableTimeSlots chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
-};
 
 // Implementação da função para obter a lista de barbeiros
 exports.getBarbers = async (req, res) => {
@@ -128,6 +136,26 @@ exports.getBarbers = async (req, res) => {
         console.error('Erro ao buscar a lista de barbeiros:', error);
         return res.status(500).json({ message: 'Erro interno do servidor ao buscar barbeiros.' });
     }
+};
+
+// --- STUBS PARA FUNÇÕES FALTANTES ---
+// Você precisará implementar a lógica para cada uma dessas funções.
+// Elas estão aqui para que as rotas em barbers.js não apontem para 'undefined'.
+
+exports.getAppointmentsByDate = async (req, res) => {
+    console.log('STUB: getAppointmentsByDate chamado. Implementar lógica.');
+    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+};
+
+exports.updateAppointmentStatus = async (req, res) => {
+    console.log('STUB: updateAppointmentStatus chamado. Implementar lógica.');
+    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+};
+
+
+exports.getAvailableTimeSlots = async (req, res) => {
+    console.log('STUB: getAvailableTimeSlots chamado. Implementar lógica.');
+    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
 };
 
 exports.createAppointment = async (req, res) => {
