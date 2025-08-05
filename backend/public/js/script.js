@@ -318,12 +318,15 @@
             if (isPastDay) {
                 dayDiv.classList.add('bg-gray-800', 'text-gray-500', 'cursor-not-allowed');
             } else if (isAvailable) {
+                // Aplica a classe para dias disponíveis
                 dayDiv.classList.add('bg-green-600', 'text-white', 'font-bold', 'cursor-pointer');
                 dayDiv.addEventListener('click', () => handleDayClick(dayDiv, formattedDate));
             } else {
+                // Dias futuros não disponíveis
                 dayDiv.classList.add('bg-gray-800', 'text-gray-500', 'cursor-not-allowed');
             }
             
+            // Adiciona marcador para o dia atual, se aplicável
             if (fullDate.toDateString() === today.toDateString()) {
                 dayDiv.classList.add('today-marker');
             }
