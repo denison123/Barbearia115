@@ -2,7 +2,8 @@
 const admin = require('firebase-admin');
 
 // Obter o conteúdo da chave de serviço das variáveis de ambiente do Render.
-const serviceAccountKeyString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+// Certifique-se de que o nome da variável de ambiente corresponde EXATAMENTE ao que você definiu no Render.
+const serviceAccountKeyString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY; // <<< AQUI ESTÁ A CHAVE!
 
 // Verifique se a variável de ambiente existe
 if (!serviceAccountKeyString) {
@@ -22,7 +23,8 @@ if (!serviceAccountKeyString) {
     }
   } catch (error) {
     console.error('Erro ao analisar a variável de ambiente FIREBASE_SERVICE_ACCOUNT_KEY:', error);
-    console.error('Certifique-se de que o valor é um JSON válido.');
+    console.error('Certifique-se de que o valor é um JSON válido e que não há caracteres extras.');
+    console.error('Conteúdo problemático (primeiros 50 caracteres):', serviceAccountKeyString.substring(0, 50)); // Ajuda a diagnosticar
   }
 }
 
