@@ -208,9 +208,81 @@ exports.getAvailableTimeSlots = async (req, res) => {
     }
 };
 
+// Implementação da função para obter agendamentos por data para o dashboard do barbeiro
 exports.getAppointmentsByDate = async (req, res) => {
-    console.log('STUB: getAppointmentsByDate chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+    console.log('[getAppointmentsByDate] Buscando agendamentos por data para o dashboard...');
+    try {
+        const barberId = req.user.id; // Assume que o ID do barbeiro vem do token JWT
+        const { date, month, year } = req.query; // Pode vir uma data específica ou mês/ano
+
+        if (!barberId) {
+            console.error('getAppointmentsByDate: ID do barbeiro não fornecido na requisição.');
+            return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
+        }
+
+        const firestore = getFirestore();
+        const appointmentsRef = firestore.collection('appointment_schedules');
+        let q = appointmentsRef.where('barberId', '==', barberId);
+
+        if (date) {
+            // Se uma data específica for fornecida (formato YYYY-MM-DD)
+            q = q.where('date', '==', date);
+            console.log(`[getAppointmentsByDate] Buscando agendamentos para o barbeiro ${barberId} na data: ${date}`);
+        } else if (month !== undefined && year !== undefined) {
+            // Se mês e ano forem fornecidos (para o calendário de marcação)
+            // Firebase não permite query por substring ou mês/ano diretamente em Timestamp
+            // Assumimos que 'date' é salvo como 'YYYY-MM-DD' para facilitar a query por mês/ano
+            // Ou que 'dateTime' é um Timestamp e precisamos filtrar no cliente ou ajustar a query
+            // Para simplificar, vamos filtrar por mês/ano no servidor se 'date' não for usado.
+            const startOfMonth = new Date(year, month, 1);
+            const endOfMonth = new Date(year, parseInt(month) + 1, 0, 23, 59, 59, 999); // Último milissegundo do mês
+
+            // Se 'dateTime' é um Timestamp, a query seria assim:
+            // q = q.where('dateTime', '>=', startOfMonth).where('dateTime', '<=', endOfMonth);
+            
+            // Se 'date' é uma string 'YYYY-MM-DD', a query seria mais complexa ou filtrada após a busca.
+            // Para evitar problemas de índice e simplificar, vamos buscar todos os agendamentos do barbeiro
+            // e filtrar por mês/ano no código, se a data não for fornecida.
+            // No entanto, para grandes volumes de dados, isso não é eficiente.
+            // A melhor prática seria ter um campo 'monthYear' (e.g., 'YYYY-MM') para query.
+            console.warn('[getAppointmentsByDate] Buscando agendamentos por mês/ano sem campo indexado. Pode ser ineficiente para muitos dados.');
+            // Por enquanto, vamos buscar todos os agendamentos do barbeiro e filtrar localmente
+            // se o mês/ano for passado, mas sem uma 'date' específica.
+            // A rota do frontend para marcar dias no calendário de agendamentos (fetchAndMarkAppointmentsInCalendar)
+            // já envia month e year. Vamos buscar todos os agendamentos do barbeiro e filtrar pelo mês/ano.
+        } else {
+            return res.status(400).json({ message: 'Data ou mês/ano são obrigatórios.' });
+        }
+
+        const querySnapshot = await q.get();
+        const appointments = [];
+
+        querySnapshot.forEach(doc => {
+            const data = doc.data();
+            // Se a query foi por mês/ano e não por data exata, filtre aqui
+            if (month !== undefined && year !== undefined && !date) {
+                let apptDateObj;
+                if (data.dateTime && typeof data.dateTime === 'object' && data.dateTime._seconds !== undefined) {
+                    apptDateObj = new Date(data.dateTime._seconds * 1000);
+                } else if (typeof data.dateTime === 'string') {
+                    apptDateObj = new Date(data.dateTime);
+                }
+
+                if (apptDateObj && apptDateObj.getFullYear() === parseInt(year) && apptDateObj.getMonth() === parseInt(month)) {
+                    appointments.push({ id: doc.id, ...data });
+                }
+            } else {
+                appointments.push({ id: doc.id, ...data });
+            }
+        });
+
+        console.log(`[getAppointmentsByDate] Agendamentos encontrados:`, appointments);
+        return res.status(200).json(appointments);
+
+    } catch (error) {
+        console.error('Erro ao buscar agendamentos por data:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor ao buscar agendamentos.' });
+    }
 };
 
 exports.updateAppointmentStatus = async (req, res) => {
