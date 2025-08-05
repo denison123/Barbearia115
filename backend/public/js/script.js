@@ -74,7 +74,8 @@
     async function fetchBarbers() {
         console.log('[fetchBarbers] Buscando barbeiros...');
         try {
-            const response = await fetch(`${API_BASE_URL}/barber/list`);
+            // CORREÇÃO: Adicionado '/api' ao caminho da URL
+            const response = await fetch(`${API_BASE_URL}/api/barber/list`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -111,7 +112,8 @@
             return;
         }
         try {
-            const response = await fetch(`${API_BASE_URL}/barber/${barberId}/available-days`);
+            // CORREÇÃO: Adicionado '/api' ao caminho da URL
+            const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-days`);
             if (response.ok) {
                 availableDaysForSelectedBarber = await response.json();
                 console.log('[fetchAvailableDays] Dias disponíveis recebidos:', availableDaysForSelectedBarber);
@@ -148,7 +150,8 @@
         displayMessage('Carregando horários...', 'info');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/barber/${barberId}/available-slots?date=${date}`);
+            // CORREÇÃO: Adicionado '/api' ao caminho da URL
+            const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-slots?date=${date}`);
             if (response.ok) {
                 const slots = await response.json();
                 console.log('[fetchAvailableSlots] Horários disponíveis recebidos:', slots);
@@ -189,7 +192,8 @@
 
         try {
             displayMessage('Confirmando agendamento...', 'info');
-            const response = await fetch(`${API_BASE_URL}/barber/book`, {
+            // CORREÇÃO: Adicionado '/api' ao caminho da URL
+            const response = await fetch(`${API_BASE_URL}/api/barber/book`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
