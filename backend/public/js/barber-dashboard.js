@@ -93,7 +93,7 @@ async function fetchAndDisplayAppointments(barberId, token, date) {
     selectedDateDisplay.textContent = date;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/barber/appointments?date=${date}`, {
+        const response = await fetch(`${API_BASE_URL}/api/barber/appointments?date=${date}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -212,7 +212,7 @@ async function fetchAndMarkAppointmentsInCalendar(barberId, token, dateObj) {
         const year = dateObj.getFullYear();
         const month = dateObj.getMonth(); // Mês é 0-indexado
 
-        const response = await fetch(`${API_BASE_URL}/barber/appointments?month=${month}&year=${year}`, {
+        const response = await fetch(`${API_BASE_URL}/api/barber/appointments?month=${month}&year=${year}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
