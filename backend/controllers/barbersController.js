@@ -104,9 +104,30 @@ exports.getAvailableTimeSlots = async (req, res) => {
     return res.status(501).json({ message: 'Funcionalidade não implementada.' });
 };
 
+// Implementação da função para obter a lista de barbeiros
 exports.getBarbers = async (req, res) => {
-    console.log('STUB: getBarbers chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+    try {
+        const firestore = getFirestore();
+        const barbersRef = firestore.collection('barbers'); // Assumindo que você tem uma coleção 'barbers'
+        const snapshot = await barbersRef.get();
+
+        if (snapshot.empty) {
+            console.log('Nenhum barbeiro encontrado.');
+            return res.status(200).json([]); // Retorna um array vazio se não houver barbeiros
+        }
+
+        const barbers = [];
+        snapshot.forEach(doc => {
+            // Inclua o ID do documento e os dados do barbeiro
+            barbers.push({ id: doc.id, ...doc.data() });
+        });
+
+        console.log('Lista de barbeiros encontrada:', barbers);
+        return res.status(200).json(barbers);
+    } catch (error) {
+        console.error('Erro ao buscar a lista de barbeiros:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor ao buscar barbeiros.' });
+    }
 };
 
 exports.createAppointment = async (req, res) => {
