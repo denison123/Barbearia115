@@ -138,9 +138,75 @@ exports.getBarbers = async (req, res) => {
     }
 };
 
-// --- STUBS PARA FUNÇÕES FALTANTES ---
-// Você precisará implementar a lógica para cada uma dessas funções.
-// Elas estão aqui para que as rotas em barbers.js não apontem para 'undefined'.
+// Implementação da função para obter horários disponíveis para agendamento
+exports.getAvailableTimeSlots = async (req, res) => {
+    console.log('[getAvailableTimeSlots] Buscando horários disponíveis...');
+    try {
+        const { barberId } = req.params; // ID do barbeiro
+        const { date } = req.query;     // Data no formato YYYY-MM-DD
+
+        if (!barberId || !date) {
+            return res.status(400).json({ message: 'ID do barbeiro e data são obrigatórios.' });
+        }
+
+        const firestore = getFirestore();
+        
+        // 1. Obter os horários de trabalho padrão do barbeiro (se existirem)
+        // Por exemplo, você pode ter uma coleção 'barber_settings' ou campos no documento do barbeiro
+        // Por enquanto, vamos usar horários fixos para demonstração.
+        const defaultStartHour = 9; // 9:00
+        const defaultEndHour = 18;  // 18:00
+        const intervalMinutes = 60; // Slots de 60 minutos
+
+        let allPossibleSlots = [];
+        for (let hour = defaultStartHour; hour < defaultEndHour; hour++) {
+            // Adiciona horários no formato 'HH:MM'
+            allPossibleSlots.push(`${String(hour).padStart(2, '0')}:00`);
+            // Se precisar de intervalos de 30 minutos, adicione:
+            // allPossibleSlots.push(`${String(hour).padStart(2, '0')}:30`);
+        }
+
+        // 2. Obter agendamentos existentes para o barbeiro na data específica
+        const appointmentsRef = firestore.collection('appointment_schedules');
+        const q = appointmentsRef
+            .where('barberId', '==', barberId)
+            .where('date', '==', date); // Assumindo que você salva a data como string 'YYYY-MM-DD'
+
+        const querySnapshot = await q.get();
+        const bookedSlots = new Set();
+
+        querySnapshot.forEach(doc => {
+            const appt = doc.data();
+            // Assumindo que appt.dateTime é uma string ISO ou um Timestamp do Firestore
+            let apptTime;
+            if (appt.dateTime && typeof appt.dateTime === 'object' && appt.dateTime._seconds !== undefined) {
+                // Se for um Timestamp do Firestore
+                const dateObj = new Date(appt.dateTime._seconds * 1000);
+                apptTime = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            } else if (typeof appt.dateTime === 'string') {
+                // Se for uma string (e.g., "YYYY-MM-DDTHH:MM:SS")
+                const dateObj = new Date(appt.dateTime);
+                apptTime = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            // Normaliza o horário para o formato 'HH:MM' para comparação
+            if (apptTime) {
+                const [hour, minute] = apptTime.split(':');
+                bookedSlots.add(`${hour}:${minute}`);
+            }
+        });
+
+        // 3. Filtrar os horários possíveis para remover os já agendados
+        const availableSlots = allPossibleSlots.filter(slot => !bookedSlots.has(slot));
+
+        console.log(`[getAvailableTimeSlots] Horários disponíveis para ${barberId} em ${date}:`, availableSlots);
+        return res.status(200).json(availableSlots);
+
+    } catch (error) {
+        console.error('Erro ao buscar horários disponíveis:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor ao buscar horários disponíveis.' });
+    }
+};
 
 exports.getAppointmentsByDate = async (req, res) => {
     console.log('STUB: getAppointmentsByDate chamado. Implementar lógica.');
@@ -149,12 +215,6 @@ exports.getAppointmentsByDate = async (req, res) => {
 
 exports.updateAppointmentStatus = async (req, res) => {
     console.log('STUB: updateAppointmentStatus chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
-};
-
-
-exports.getAvailableTimeSlots = async (req, res) => {
-    console.log('STUB: getAvailableTimeSlots chamado. Implementar lógica.');
     return res.status(501).json({ message: 'Funcionalidade não implementada.' });
 };
 
