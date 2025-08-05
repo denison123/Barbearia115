@@ -74,8 +74,7 @@
     async function fetchBarbers() {
         console.log('[fetchBarbers] Buscando barbeiros...');
         try {
-            // CORREÇÃO: Adicionado '/api' ao caminho da URL
-            const response = await fetch(`${API_BASE_URL}/api/barber/list`);
+            const response = await fetch(`${API_BASE_URL}/api/barber/list`); // URL com /api/
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -112,17 +111,16 @@
             return;
         }
         try {
-            // CORREÇÃO: Adicionado '/api' ao caminho da URL
-            const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-days`);
+            const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-days`); // URL com /api/
             if (response.ok) {
-                availableDaysForSelectedBarber = await response.json();
+                availableDaysForSelectedBarber = await response.json(); // Espera um array de strings de data (YYYY-MM-DD)
                 console.log('[fetchAvailableDays] Dias disponíveis recebidos:', availableDaysForSelectedBarber);
             } else {
                 console.error('[fetchAvailableDays] Erro ao buscar dias disponíveis:', response.status, response.statusText);
                 availableDaysForSelectedBarber = [];
                 displayMessage('Erro ao carregar dias disponíveis para este barbeiro.', 'error');
             }
-            renderCalendar(currentCalendarDate);
+            renderCalendar(currentCalendarDate); // Re-renderiza o calendário após obter os dias
         } catch (error) {
             console.error('[fetchAvailableDays] Erro de rede ao buscar dias disponíveis:', error);
             availableDaysForSelectedBarber = [];
@@ -150,8 +148,7 @@
         displayMessage('Carregando horários...', 'info');
 
         try {
-            // CORREÇÃO: Adicionado '/api' ao caminho da URL
-            const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-slots?date=${date}`);
+            const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-slots?date=${date}`); // URL com /api/
             if (response.ok) {
                 const slots = await response.json();
                 console.log('[fetchAvailableSlots] Horários disponíveis recebidos:', slots);
@@ -192,8 +189,7 @@
 
         try {
             displayMessage('Confirmando agendamento...', 'info');
-            // CORREÇÃO: Adicionado '/api' ao caminho da URL
-            const response = await fetch(`${API_BASE_URL}/api/barber/book`, {
+            const response = await fetch(`${API_BASE_URL}/api/barber/book`, { // URL com /api/
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -315,6 +311,7 @@
             dayDiv.dataset.date = formattedDate;
 
             // Adiciona classes de estilo com base na disponibilidade e na data atual
+            // AQUI: Verifica se a data formatada está no array de dias disponíveis
             const isAvailable = availableDaysForSelectedBarber.includes(formattedDate);
             const isPastDay = fullDate < today;
 
@@ -345,16 +342,19 @@
         calendarGrid.querySelectorAll('.calendar-day.selected-day').forEach(el => {
             el.classList.remove('selected-day', 'bg-blue-600');
             const elDateStr = el.dataset.date;
+            // Garante que o dia retorna à cor original de disponibilidade ou não
             if (availableDaysForSelectedBarber.includes(elDateStr)) {
                 el.classList.add('bg-green-600');
+                el.classList.remove('bg-gray-800'); // Remove gray if it was available
             } else {
                 el.classList.add('bg-gray-800');
+                el.classList.remove('bg-green-600'); // Remove green if it was not available
             }
         });
 
         // Adiciona a seleção ao dia clicado
         dayDiv.classList.add('selected-day', 'bg-blue-600');
-        dayDiv.classList.remove('bg-green-600');
+        dayDiv.classList.remove('bg-green-600', 'bg-gray-800'); // Remove cores anteriores
 
         selectedDateInput.value = formattedDate;
         await fetchAvailableSlots(barberSelect.value, formattedDate);
@@ -375,7 +375,7 @@
         displayMessage('');
 
         if (barberSelect.value) {
-            await fetchAvailableDays(barberSelect.value);
+            await fetchAvailableDays(barberSelect.value); // Rebusca os dias disponíveis para o novo mês
         } else {
             renderCalendar(currentCalendarDate);
         }
@@ -392,13 +392,13 @@
         // Se a lista de barbeiros foi carregada e há barbeiros disponíveis,
         // carrega os dias disponíveis para o primeiro barbeiro.
         if (barberSelect.options.length > 1 && !barberSelect.value) {
-            barberSelect.value = barberSelect.options[1].value;
+            barberSelect.value = barberSelect.options[1].value; // Seleciona o primeiro barbeiro
         }
 
         if (barberSelect.value) {
-            await fetchAvailableDays(barberSelect.value);
+            await fetchAvailableDays(barberSelect.value); // Carrega os dias disponíveis para o barbeiro selecionado
         } else {
-            renderCalendar(currentCalendarDate);
+            renderCalendar(currentCalendarDate); // Renderiza o calendário sem dias disponíveis se nenhum barbeiro estiver selecionado
         }
 
         // Event listener para mudança de barbeiro
@@ -412,7 +412,7 @@
             availableTimesList.innerHTML = '<p class="text-gray-400">Selecione uma data para ver os horários.</p>';
             displayMessage('');
 
-            await fetchAvailableDays(selectedBarberId);
+            await fetchAvailableDays(selectedBarberId); // Rebusca os dias disponíveis para o novo barbeiro
         });
 
         // Event listeners para navegação do calendário
