@@ -55,23 +55,24 @@ exports.getDashboardStats = async (req, res) => {
 };
 
 // Função para definir/atualizar os dias de disponibilidade do barbeiro
-// CORREÇÃO: Nome da função para corresponder à rota em barbers.js
+// CORREÇÃO: Ajustado para usar a coleção 'barber_available_days' e o campo 'dates'
 exports.setAvailableDays = async (req, res) => {
     try {
         const barberId = req.user.id; // Assume que o ID do barbeiro vem do token JWT
-        const { availability } = req.body; // Espera um objeto { availability: [...] }
+        // O frontend envia 'availableDates', ajustamos para 'availability' para consistência interna
+        const { availableDates } = req.body; 
 
         if (!barberId) {
             return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
         }
-        if (!availability || !Array.isArray(availability)) {
+        if (!availableDates || !Array.isArray(availableDates)) {
             return res.status(400).json({ message: 'Dados de disponibilidade inválidos. Esperado um array.' });
         }
 
         const firestore = getFirestore();
-        // Salva a disponibilidade em uma subcoleção ou documento específico do barbeiro
-        const docRef = firestore.collection('barbers').doc(barberId).collection('availability').doc('current');
-        await docRef.set({ days: availability }); // Salva como um array de dias
+        // Caminho ajustado para 'barber_available_days/{barberId}' e campo 'dates'
+        const docRef = firestore.collection('barber_available_days').doc(barberId);
+        await docRef.set({ dates: availableDates }); // Salva como um array no campo 'dates'
 
         return res.status(200).json({ message: 'Disponibilidade salva com sucesso!' });
     } catch (error) {
@@ -81,6 +82,7 @@ exports.setAvailableDays = async (req, res) => {
 };
 
 // Implementação da função para obter os dias de disponibilidade de um barbeiro
+// CORREÇÃO: Ajustado para usar a coleção 'barber_available_days' e o campo 'dates'
 exports.getAvailableDays = async (req, res) => {
     console.log('[getAvailableDays] Buscando dias disponíveis...');
     try {
@@ -92,13 +94,13 @@ exports.getAvailableDays = async (req, res) => {
         }
 
         const firestore = getFirestore();
-        // Busca a disponibilidade na subcoleção 'availability' do documento do barbeiro
-        const docRef = firestore.collection('barbers').doc(barberId).collection('availability').doc('current');
+        // Caminho ajustado para 'barber_available_days/{barberId}'
+        const docRef = firestore.collection('barber_available_days').doc(barberId);
         const docSnapshot = await docRef.get();
 
         if (docSnapshot.exists) {
             const data = docSnapshot.data();
-            const availableDays = data.days || []; // Retorna o array de dias ou um array vazio
+            const availableDays = data.dates || []; // Retorna o array do campo 'dates' ou um array vazio
             console.log(`[getAvailableDays] Dias disponíveis para ${barberId}:`, availableDays);
             return res.status(200).json(availableDays);
         } else {
@@ -233,21 +235,9 @@ exports.getAppointmentsByDate = async (req, res) => {
             // Firebase não permite query por substring ou mês/ano diretamente em Timestamp
             // Assumimos que 'date' é salvo como 'YYYY-MM-DD' para facilitar a query por mês/ano
             // Ou que 'dateTime' é um Timestamp e precisamos filtrar no cliente ou ajustar a query
-            // Para simplificar, vamos filtrar por mês/ano no servidor se 'date' não for usado.
-            const startOfMonth = new Date(year, month, 1);
-            const endOfMonth = new Date(year, parseInt(month) + 1, 0, 23, 59, 59, 999); // Último milissegundo do mês
-
-            // Se 'dateTime' é um Timestamp, a query seria assim:
-            // q = q.where('dateTime', '>=', startOfMonth).where('dateTime', '<=', endOfMonth);
-            
-            // Se 'date' é uma string 'YYYY-MM-DD', a query seria mais complexa ou filtrada após a busca.
             // Para evitar problemas de índice e simplificar, vamos buscar todos os agendamentos do barbeiro
             // e filtrar por mês/ano no código, se a data não for fornecida.
-            // No entanto, para grandes volumes de dados, isso não é eficiente.
-            // A melhor prática seria ter um campo 'monthYear' (e.g., 'YYYY-MM') para query.
             console.warn('[getAppointmentsByDate] Buscando agendamentos por mês/ano sem campo indexado. Pode ser ineficiente para muitos dados.');
-            // Por enquanto, vamos buscar todos os agendamentos do barbeiro e filtrar localmente
-            // se o mês/ano for passado, mas sem uma 'date' específica.
             // A rota do frontend para marcar dias no calendário de agendamentos (fetchAndMarkAppointmentsInCalendar)
             // já envia month e year. Vamos buscar todos os agendamentos do barbeiro e filtrar pelo mês/ano.
         } else {
