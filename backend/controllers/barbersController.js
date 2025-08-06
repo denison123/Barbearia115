@@ -282,25 +282,27 @@ exports.updateAppointmentStatus = async (req, res) => {
 
 exports.createAppointment = async (req, res) => {
     console.log('[createAppointment] Criando novo agendamento...');
-    console.log('[createAppointment] Corpo da requisição:', req.body); // LOG ADICIONAL
+    console.log('[createAppointment] Corpo da requisição:', req.body);
     try {
-        const { barberId, date, time, service, clientName, clientPhone } = req.body;
-
-        if (!barberId || !date || !time || !service || !clientName || !clientPhone) {
-            return res.status(400).json({ message: 'Todos os campos são obrigatórios: barberId, date, time, service, clientName, clientPhone.' });
+        // CORREÇÃO: Usar os nomes de campo que o frontend está a enviar
+        const { barberId, customerName, customerPhone, service, dateTime } = req.body;
+        
+        // CORREÇÃO: Verificar se os campos necessários estão presentes
+        if (!barberId || !customerName || !customerPhone || !service || !dateTime) {
+            return res.status(400).json({ message: 'Todos os campos são obrigatórios: barberId, customerName, customerPhone, service, dateTime.' });
         }
 
-        // Combine a data e o horário para criar um objeto Date/Timestamp
-        const [year, month, day] = date.split('-').map(Number);
-        const [hour, minute] = time.split(':').map(Number);
-        const appointmentDateTime = new Date(year, month - 1, day, hour, minute);
+        // CORREÇÃO: Extrair a data e a hora do campo dateTime
+        const appointmentDateTime = new Date(dateTime);
+        const date = appointmentDateTime.toISOString().split('T')[0];
+        const time = appointmentDateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
         // Verifique se o horário já está agendado para evitar sobreposição
         const appointmentsRef = db.collection('appointment_schedules');
         const q = appointmentsRef
             .where('barberId', '==', barberId)
             .where('date', '==', date)
-            .where('time', '==', time) // Adicionamos a verificação do horário também
+            .where('time', '==', time)
             .limit(1);
 
         const querySnapshot = await q.get();
@@ -310,14 +312,14 @@ exports.createAppointment = async (req, res) => {
 
         const newAppointment = {
             barberId,
-            clientName,
-            clientPhone,
+            clientName: customerName, // Mapear customerName para clientName
+            clientPhone: customerPhone, // Mapear customerPhone para clientPhone
             service,
-            date, // Salva a data como string 'YYYY-MM-DD' para facilitar a busca
-            time, // Salva o horário como string 'HH:MM' para a mesma razão
+            date,
+            time,
             dateTime: appointmentDateTime, // Salva o Timestamp para ordenação e outras operações
             status: 'pending', // Status inicial do agendamento
-            createdAt: admin.firestore.FieldValue.serverTimestamp() // Adiciona um carimbo de data/hora do servidor
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
         };
 
         const docRef = await appointmentsRef.add(newAppointment);
