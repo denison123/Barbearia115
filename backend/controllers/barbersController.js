@@ -91,15 +91,18 @@ exports.getAvailableDays = async (req, res) => {
 
         const firestore = getFirestore();
         const docRef = firestore.collection('barber_available_days').doc(barberId);
+        console.log(`[getAvailableDays] Tentando buscar documento: barber_available_days/${barberId}`);
         const docSnapshot = await docRef.get();
 
+        console.log(`[getAvailableDays] docSnapshot.exists: ${docSnapshot.exists}`);
         if (docSnapshot.exists) {
             const data = docSnapshot.data();
+            console.log(`[getAvailableDays] Dados do documento:`, data);
             const availableDays = data.dates || []; // Retorna o array do campo 'dates' ou um array vazio
             console.log(`[getAvailableDays] Dias disponíveis para ${barberId}:`, availableDays);
             return res.status(200).json(availableDays);
         } else {
-            console.log(`[getAvailableDays] Nenhum dia de disponibilidade encontrado para o barbeiro ${barberId}.`);
+            console.log(`[getAvailableDays] Nenhum documento de disponibilidade encontrado para o barbeiro ${barberId}.`);
             return res.status(200).json([]); // Retorna um array vazio se o documento não existir
         }
     } catch (error) {
@@ -114,30 +117,38 @@ exports.getBarbers = async (req, res) => {
     try {
         const firestore = getFirestore();
         const barbersRef = firestore.collection('barbers'); 
+        console.log('[getBarbers] Buscando documentos na coleção "barbers".');
         const snapshot = await barbersRef.get();
 
         if (snapshot.empty) {
-            console.log('Nenhum barbeiro encontrado.');
+            console.log('[getBarbers] Nenhum barbeiro encontrado na coleção "barbers".');
             return res.status(200).json([]); 
         }
 
         const barbers = [];
-        for (const doc of snapshot.docs) { // Usar for...of para await dentro do loop
+        for (const doc of snapshot.docs) { 
             const barberData = { id: doc.id, ...doc.data() };
+            console.log(`[getBarbers] Processando barbeiro: ${barberData.id}, nome: ${barberData.name}`);
 
             // Busca os dias de disponibilidade para cada barbeiro
             const availabilityDocRef = firestore.collection('barber_available_days').doc(barberData.id);
+            console.log(`[getBarbers] Tentando buscar disponibilidade para: barber_available_days/${barberData.id}`);
             const availabilitySnapshot = await availabilityDocRef.get();
             
+            console.log(`[getBarbers] availabilitySnapshot.exists para ${barberData.id}: ${availabilitySnapshot.exists}`);
             if (availabilitySnapshot.exists) {
-                barberData.availableDays = availabilitySnapshot.data().dates || [];
+                const availabilityData = availabilitySnapshot.data();
+                console.log(`[getBarbers] Dados de disponibilidade brutos para ${barberData.id}:`, availabilityData);
+                barberData.availableDays = availabilityData.dates || [];
+                console.log(`[getBarbers] Dias disponíveis processados para ${barberData.id}:`, barberData.availableDays);
             } else {
                 barberData.availableDays = [];
+                console.log(`[getBarbers] Nenhum documento de disponibilidade encontrado para ${barberData.id}.`);
             }
             barbers.push(barberData);
         }
 
-        console.log('Lista de barbeiros encontrada:', barbers);
+        console.log('Lista final de barbeiros encontrada:', barbers);
         return res.status(200).json(barbers);
     } catch (error) {
         console.error('Erro ao buscar a lista de barbeiros:', error);
