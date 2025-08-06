@@ -282,6 +282,7 @@ exports.updateAppointmentStatus = async (req, res) => {
 
 exports.createAppointment = async (req, res) => {
     console.log('[createAppointment] Criando novo agendamento...');
+    console.log('[createAppointment] Corpo da requisição:', req.body); // LOG ADICIONAL
     try {
         const { barberId, date, time, service, clientName, clientPhone } = req.body;
 
@@ -335,4 +336,3 @@ exports.createAppointment = async (req, res) => {
 
 // Implementação da função para obter agendamentos por data para o dashboard do barbeiro
 // ... (resto do código)
-
