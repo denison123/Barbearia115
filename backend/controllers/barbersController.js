@@ -1,15 +1,11 @@
 // backend/controllers/barbersController.js
 
-// CORREÇÃO: O Canvas 'Código Final do Firebase.js' exporta o objeto 'admin'.
-// Precisamos importá-lo e então obter a instância do Firestore a partir dele.
 const admin = require('../config/firebase');
 const db = admin.firestore();
 
 // Função para obter estatísticas do dashboard
 exports.getDashboardStats = async (req, res) => {
     try {
-        // req.user.id virá do middleware de autenticação (authMiddleware)
-        // CERTIFIQUE-SE DE QUE O JWT RETORNA O ID DO DOCUMENTO DO FIRESTORE (e não um campo 'barberId' do documento)
         const barberId = req.user.id;
         
         if (!barberId) {
@@ -58,7 +54,6 @@ exports.getDashboardStats = async (req, res) => {
 // Função para definir/atualizar os dias de disponibilidade do barbeiro
 exports.setAvailableDays = async (req, res) => {
     try {
-        // Use o ID do documento do barbeiro (id do token JWT)
         const barberId = req.user.id;
         const { availableDates } = req.body; 
 
@@ -70,7 +65,7 @@ exports.setAvailableDays = async (req, res) => {
         }
 
         const docRef = db.collection('barber_available_days').doc(barberId);
-        await docRef.set({ dates: availableDates }); // Salva como um array no campo 'dates'
+        await docRef.set({ dates: availableDates });
 
         return res.status(200).json({ message: 'Disponibilidade salva com sucesso!' });
     } catch (error) {
@@ -83,7 +78,7 @@ exports.setAvailableDays = async (req, res) => {
 exports.getAvailableDays = async (req, res) => {
     console.log('[getAvailableDays] Buscando dias disponíveis...');
     try {
-        const { barberId } = req.params; // Obtém o ID do barbeiro dos parâmetros da URL
+        const { barberId } = req.params;
 
         if (!barberId) {
             console.error('getAvailableDays: ID do barbeiro não fornecido na requisição.');
@@ -98,12 +93,12 @@ exports.getAvailableDays = async (req, res) => {
         if (docSnapshot.exists) {
             const data = docSnapshot.data();
             console.log(`[getAvailableDays] Dados do documento:`, data);
-            const availableDays = data.dates || []; // Retorna o array do campo 'dates' ou um array vazio
+            const availableDays = data.dates || [];
             console.log(`[getAvailableDays] Dias disponíveis para ${barberId}:`, availableDays);
             return res.status(200).json(availableDays);
         } else {
             console.log(`[getAvailableDays] Nenhum documento de disponibilidade encontrado para o barbeiro ${barberId}.`);
-            return res.status(200).json([]); // Retorna um array vazio se o documento não existir
+            return res.status(200).json([]);
         }
     } catch (error) {
         console.error('Erro ao buscar dias disponíveis:', error);
@@ -126,11 +121,9 @@ exports.getBarbers = async (req, res) => {
 
         const barbers = [];
         for (const doc of snapshot.docs) {
-            // AQUI É O PONTO CRÍTICO: use doc.id como o ID canônico do barbeiro.
             const barberData = { id: doc.id, ...doc.data() };
             console.log(`[getBarbers] Processando barbeiro: ${barberData.id}, nome: ${barberData.name}`);
 
-            // Busca os dias de disponibilidade para cada barbeiro usando o ID do documento
             const availabilityDocRef = db.collection('barber_available_days').doc(barberData.id);
             console.log(`[getBarbers] Tentando buscar disponibilidade para: barber_available_days/${barberData.id}`);
             const availabilitySnapshot = await availabilityDocRef.get();
@@ -160,61 +153,48 @@ exports.getBarbers = async (req, res) => {
 exports.getAvailableTimeSlots = async (req, res) => {
     console.log('[getAvailableTimeSlots] Buscando horários disponíveis...');
     try {
-        const { barberId } = req.params; // ID do barbeiro
-        const { date } = req.query;     // Data no formato YYYY-MM-DD
+        const { barberId } = req.params;
+        const { date } = req.query;
 
         if (!barberId || !date) {
             return res.status(400).json({ message: 'ID do barbeiro e data são obrigatórios.' });
         }
 
-        // Use a instância do Firestore obtida no início do arquivo
         const appointmentsRef = db.collection('appointment_schedules');
         
-        // 1. Obter os horários de trabalho padrão do barbeiro (se existirem)
-        // Por exemplo, você pode ter uma coleção 'barber_settings' ou campos no documento do barbeiro
-        // Por enquanto, vamos usar horários fixos para demonstração.
-        const defaultStartHour = 9; // 9:00
-        const defaultEndHour = 18;  // 18:00
-        const intervalMinutes = 60; // Slots de 60 minutos
+        const defaultStartHour = 9;
+        const defaultEndHour = 18;
+        const intervalMinutes = 60;
 
         let allPossibleSlots = [];
         for (let hour = defaultStartHour; hour < defaultEndHour; hour++) {
-            // Adiciona horários no formato 'HH:MM'
             allPossibleSlots.push(`${String(hour).padStart(2, '0')}:00`);
-            // Se precisar de intervalos de 30 minutos, adicione:
-            // allPossibleSlots.push(`${String(hour).padStart(2, '0')}:30`);
         }
 
-        // 2. Obter agendamentos existentes para o barbeiro na data específica
         const q = appointmentsRef
             .where('barberId', '==', barberId)
-            .where('date', '==', date); // Assumindo que você salva a data como string 'YYYY-MM-DD'
+            .where('date', '==', date);
 
         const querySnapshot = await q.get();
         const bookedSlots = new Set();
 
         querySnapshot.forEach(doc => {
             const appt = doc.data();
-            // Assumindo que appt.dateTime é uma string ISO ou um Timestamp do Firestore
             let apptTime;
             if (appt.dateTime && typeof appt.dateTime === 'object' && appt.dateTime._seconds !== undefined) {
-                // Se for um Timestamp do Firestore
                 const dateObj = new Date(appt.dateTime._seconds * 1000);
                 apptTime = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             } else if (typeof appt.dateTime === 'string') {
-                // Se for uma string (e.g., "YYYY-MM-DDTHH:MM:SS")
                 const dateObj = new Date(appt.dateTime);
                 apptTime = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             }
             
-            // Normaliza o horário para o formato 'HH:MM' para comparação
             if (apptTime) {
                 const [hour, minute] = apptTime.split(':');
                 bookedSlots.add(`${hour}:${minute}`);
             }
         });
 
-        // 3. Filtrar os horários possíveis para remover os já agendados
         const availableSlots = allPossibleSlots.filter(slot => !bookedSlots.has(slot));
 
         console.log(`[getAvailableTimeSlots] Horários disponíveis para ${barberId} em ${date}:`, availableSlots);
@@ -230,25 +210,21 @@ exports.getAvailableTimeSlots = async (req, res) => {
 exports.getAppointmentsByDate = async (req, res) => {
     console.log('[getAppointmentsByDate] Buscando agendamentos por data para o dashboard...');
     try {
-        // Use o ID do documento do barbeiro (id do token JWT)
         const barberId = req.user.id;
-        const { date, month, year } = req.query; // Pode vir uma data específica ou mês/ano
+        const { date, month, year } = req.query;
 
         if (!barberId) {
             console.error('getAppointmentsByDate: ID do barbeiro não fornecido na requisição.');
             return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
         }
 
-        // Use a instância do Firestore obtida no início do arquivo
         const appointmentsRef = db.collection('appointment_schedules');
         let q = appointmentsRef.where('barberId', '==', barberId);
 
         if (date) {
-            // Se uma data específica for fornecida (formato YYYY-MM-DD)
             q = q.where('date', '==', date);
             console.log(`[getAppointmentsByDate] Buscando agendamentos para o barbeiro ${barberId} na data: ${date}`);
         } else if (month !== undefined && year !== undefined) {
-            // Se mês e ano forem fornecidos (para o calendário de marcação)
             console.warn('[getAppointmentsByDate] Buscando agendamentos por mês/ano sem campo indexado. Pode ser ineficiente para muitos dados.');
         } else {
             return res.status(400).json({ message: 'Data ou mês/ano são obrigatórios.' });
@@ -259,7 +235,6 @@ exports.getAppointmentsByDate = async (req, res) => {
 
         querySnapshot.forEach(doc => {
             const data = doc.data();
-            // Se a query foi por mês/ano e não por data exata, filtre aqui
             if (month !== undefined && year !== undefined && !date) {
                 let apptDateObj;
                 if (data.dateTime && typeof data.dateTime === 'object' && data.dateTime._seconds !== undefined) {
@@ -286,11 +261,78 @@ exports.getAppointmentsByDate = async (req, res) => {
 };
 
 exports.updateAppointmentStatus = async (req, res) => {
-    console.log('STUB: updateAppointmentStatus chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+    try {
+        const { appointmentId } = req.params;
+        const { status } = req.body;
+
+        if (!appointmentId || !status) {
+            return res.status(400).json({ message: 'ID do agendamento e status são obrigatórios.' });
+        }
+
+        const appointmentRef = db.collection('appointment_schedules').doc(appointmentId);
+        await appointmentRef.update({ status });
+
+        return res.status(200).json({ message: `Status do agendamento ${appointmentId} atualizado para ${status}.` });
+
+    } catch (error) {
+        console.error('Erro ao atualizar status do agendamento:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor ao atualizar status do agendamento.' });
+    }
 };
 
 exports.createAppointment = async (req, res) => {
-    console.log('STUB: createAppointment chamado. Implementar lógica.');
-    return res.status(501).json({ message: 'Funcionalidade não implementada.' });
+    console.log('[createAppointment] Criando novo agendamento...');
+    try {
+        const { barberId, date, time, service, clientName, clientPhone } = req.body;
+
+        if (!barberId || !date || !time || !service || !clientName || !clientPhone) {
+            return res.status(400).json({ message: 'Todos os campos são obrigatórios: barberId, date, time, service, clientName, clientPhone.' });
+        }
+
+        // Combine a data e o horário para criar um objeto Date/Timestamp
+        const [year, month, day] = date.split('-').map(Number);
+        const [hour, minute] = time.split(':').map(Number);
+        const appointmentDateTime = new Date(year, month - 1, day, hour, minute);
+
+        // Verifique se o horário já está agendado para evitar sobreposição
+        const appointmentsRef = db.collection('appointment_schedules');
+        const q = appointmentsRef
+            .where('barberId', '==', barberId)
+            .where('date', '==', date)
+            .where('time', '==', time) // Adicionamos a verificação do horário também
+            .limit(1);
+
+        const querySnapshot = await q.get();
+        if (!querySnapshot.empty) {
+            return res.status(409).json({ message: 'Este horário já está agendado. Por favor, escolha outro.' });
+        }
+
+        const newAppointment = {
+            barberId,
+            clientName,
+            clientPhone,
+            service,
+            date, // Salva a data como string 'YYYY-MM-DD' para facilitar a busca
+            time, // Salva o horário como string 'HH:MM' para a mesma razão
+            dateTime: appointmentDateTime, // Salva o Timestamp para ordenação e outras operações
+            status: 'pending', // Status inicial do agendamento
+            createdAt: admin.firestore.FieldValue.serverTimestamp() // Adiciona um carimbo de data/hora do servidor
+        };
+
+        const docRef = await appointmentsRef.add(newAppointment);
+        console.log(`[createAppointment] Agendamento criado com ID: ${docRef.id}`);
+
+        return res.status(201).json({ 
+            message: 'Agendamento criado com sucesso!',
+            appointmentId: docRef.id
+        });
+
+    } catch (error) {
+        console.error('Erro ao criar agendamento:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor ao criar agendamento.' });
+    }
 };
+
+// Implementação da função para obter agendamentos por data para o dashboard do barbeiro
+// ... (resto do código)
+
