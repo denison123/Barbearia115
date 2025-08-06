@@ -55,11 +55,9 @@ exports.getDashboardStats = async (req, res) => {
 };
 
 // Função para definir/atualizar os dias de disponibilidade do barbeiro
-// CORREÇÃO: Ajustado para usar a coleção 'barber_available_days' e o campo 'dates'
 exports.setAvailableDays = async (req, res) => {
     try {
         const barberId = req.user.id; // Assume que o ID do barbeiro vem do token JWT
-        // O frontend envia 'availableDates', ajustamos para 'availability' para consistência interna
         const { availableDates } = req.body; 
 
         if (!barberId) {
@@ -70,7 +68,6 @@ exports.setAvailableDays = async (req, res) => {
         }
 
         const firestore = getFirestore();
-        // Caminho ajustado para 'barber_available_days/{barberId}' e campo 'dates'
         const docRef = firestore.collection('barber_available_days').doc(barberId);
         await docRef.set({ dates: availableDates }); // Salva como um array no campo 'dates'
 
@@ -82,7 +79,6 @@ exports.setAvailableDays = async (req, res) => {
 };
 
 // Implementação da função para obter os dias de disponibilidade de um barbeiro
-// CORREÇÃO: Ajustado para usar a coleção 'barber_available_days' e o campo 'dates'
 exports.getAvailableDays = async (req, res) => {
     console.log('[getAvailableDays] Buscando dias disponíveis...');
     try {
@@ -94,7 +90,6 @@ exports.getAvailableDays = async (req, res) => {
         }
 
         const firestore = getFirestore();
-        // Caminho ajustado para 'barber_available_days/{barberId}'
         const docRef = firestore.collection('barber_available_days').doc(barberId);
         const docSnapshot = await docRef.get();
 
@@ -118,19 +113,29 @@ exports.getAvailableDays = async (req, res) => {
 exports.getBarbers = async (req, res) => {
     try {
         const firestore = getFirestore();
-        const barbersRef = firestore.collection('barbers'); // Assumindo que você tem uma coleção 'barbers'
+        const barbersRef = firestore.collection('barbers'); 
         const snapshot = await barbersRef.get();
 
         if (snapshot.empty) {
             console.log('Nenhum barbeiro encontrado.');
-            return res.status(200).json([]); // Retorna um array vazio se não houver barbeiros
+            return res.status(200).json([]); 
         }
 
         const barbers = [];
-        snapshot.forEach(doc => {
-            // Inclua o ID do documento e os dados do barbeiro
-            barbers.push({ id: doc.id, ...doc.data() });
-        });
+        for (const doc of snapshot.docs) { // Usar for...of para await dentro do loop
+            const barberData = { id: doc.id, ...doc.data() };
+
+            // Busca os dias de disponibilidade para cada barbeiro
+            const availabilityDocRef = firestore.collection('barber_available_days').doc(barberData.id);
+            const availabilitySnapshot = await availabilityDocRef.get();
+            
+            if (availabilitySnapshot.exists) {
+                barberData.availableDays = availabilitySnapshot.data().dates || [];
+            } else {
+                barberData.availableDays = [];
+            }
+            barbers.push(barberData);
+        }
 
         console.log('Lista de barbeiros encontrada:', barbers);
         return res.status(200).json(barbers);
