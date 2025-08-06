@@ -23,11 +23,13 @@ exports.getDashboardStats = async (req, res) => {
         const collectionRef = db.collection('appointment_schedules');
         
         // CORREÇÃO: Adicionar filtros de data para obter apenas os agendamentos do mês atual
+        // ADICIONAR orderBy para suportar a consulta de intervalo de data
         const q = collectionRef
                     .where('barberId', '==', barberId)
                     .where('dateTime', '>=', startOfMonth)
-                    .where('dateTime', '<=', endOfMonth);
-        
+                    .where('dateTime', '<=', endOfMonth)
+                    .orderBy('dateTime', 'asc'); // Adicionamos orderBy para resolver o erro
+
         const querySnapshot = await q.get();
 
         let completedAppointments = 0;
@@ -240,10 +242,12 @@ exports.getAppointmentsByDate = async (req, res) => {
             const startOfMonth = new Date(parseInt(year), parseInt(month), 1);
             const endOfMonth = new Date(parseInt(year), parseInt(month) + 1, 0, 23, 59, 59);
 
+            // ADICIONAR orderBy para suportar a consulta de intervalo de data
             q = appointmentsRef
                 .where('barberId', '==', barberId)
                 .where('dateTime', '>=', startOfMonth)
-                .where('dateTime', '<=', endOfMonth);
+                .where('dateTime', '<=', endOfMonth)
+                .orderBy('dateTime', 'asc');
 
             console.log(`[getAppointmentsByDate] Buscando agendamentos por mês/ano para o barbeiro ${barberId} no mês: ${month}, ano: ${year}`);
         } else {
