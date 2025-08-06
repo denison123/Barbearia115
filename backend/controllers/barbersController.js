@@ -15,8 +15,19 @@ exports.getDashboardStats = async (req, res) => {
 
         console.log(`Buscando estatísticas para o barbeiro com ID: ${barberId}`);
 
+        // Obter o início e o fim do mês atual para filtrar os agendamentos
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
         const collectionRef = db.collection('appointment_schedules');
-        const q = collectionRef.where('barberId', '==', barberId);
+        
+        // CORREÇÃO: Adicionar filtros de data para obter apenas os agendamentos do mês atual
+        const q = collectionRef
+                    .where('barberId', '==', barberId)
+                    .where('dateTime', '>=', startOfMonth)
+                    .where('dateTime', '<=', endOfMonth);
+        
         const querySnapshot = await q.get();
 
         let completedAppointments = 0;
@@ -225,7 +236,16 @@ exports.getAppointmentsByDate = async (req, res) => {
             q = q.where('date', '==', date);
             console.log(`[getAppointmentsByDate] Buscando agendamentos para o barbeiro ${barberId} na data: ${date}`);
         } else if (month !== undefined && year !== undefined) {
-            console.warn('[getAppointmentsByDate] Buscando agendamentos por mês/ano sem campo indexado. Pode ser ineficiente para muitos dados.');
+            // CORREÇÃO: Usar um filtro de intervalo no campo `dateTime` para ser mais eficiente
+            const startOfMonth = new Date(parseInt(year), parseInt(month), 1);
+            const endOfMonth = new Date(parseInt(year), parseInt(month) + 1, 0, 23, 59, 59);
+
+            q = appointmentsRef
+                .where('barberId', '==', barberId)
+                .where('dateTime', '>=', startOfMonth)
+                .where('dateTime', '<=', endOfMonth);
+
+            console.log(`[getAppointmentsByDate] Buscando agendamentos por mês/ano para o barbeiro ${barberId} no mês: ${month}, ano: ${year}`);
         } else {
             return res.status(400).json({ message: 'Data ou mês/ano são obrigatórios.' });
         }
@@ -235,20 +255,7 @@ exports.getAppointmentsByDate = async (req, res) => {
 
         querySnapshot.forEach(doc => {
             const data = doc.data();
-            if (month !== undefined && year !== undefined && !date) {
-                let apptDateObj;
-                if (data.dateTime && typeof data.dateTime === 'object' && data.dateTime._seconds !== undefined) {
-                    apptDateObj = new Date(data.dateTime._seconds * 1000);
-                } else if (typeof data.dateTime === 'string') {
-                    apptDateObj = new Date(data.dateTime);
-                }
-
-                if (apptDateObj && apptDateObj.getFullYear() === parseInt(year) && apptDateObj.getMonth() === parseInt(month)) {
-                    appointments.push({ id: doc.id, ...data });
-                }
-            } else {
-                appointments.push({ id: doc.id, ...data });
-            }
+            appointments.push({ id: doc.id, ...data });
         });
 
         console.log(`[getAppointmentsByDate] Agendamentos encontrados:`, appointments);
@@ -284,20 +291,16 @@ exports.createAppointment = async (req, res) => {
     console.log('[createAppointment] Criando novo agendamento...');
     console.log('[createAppointment] Corpo da requisição:', req.body);
     try {
-        // CORREÇÃO: Usar os nomes de campo que o frontend está a enviar
         const { barberId, customerName, customerPhone, service, dateTime } = req.body;
         
-        // CORREÇÃO: Verificar se os campos necessários estão presentes
         if (!barberId || !customerName || !customerPhone || !service || !dateTime) {
             return res.status(400).json({ message: 'Todos os campos são obrigatórios: barberId, customerName, customerPhone, service, dateTime.' });
         }
 
-        // CORREÇÃO: Extrair a data e a hora do campo dateTime
         const appointmentDateTime = new Date(dateTime);
         const date = appointmentDateTime.toISOString().split('T')[0];
         const time = appointmentDateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-        // Verifique se o horário já está agendado para evitar sobreposição
         const appointmentsRef = db.collection('appointment_schedules');
         const q = appointmentsRef
             .where('barberId', '==', barberId)
@@ -312,13 +315,13 @@ exports.createAppointment = async (req, res) => {
 
         const newAppointment = {
             barberId,
-            clientName: customerName, // Mapear customerName para clientName
-            clientPhone: customerPhone, // Mapear customerPhone para clientPhone
+            clientName: customerName,
+            clientPhone: customerPhone,
             service,
             date,
             time,
-            dateTime: appointmentDateTime, // Salva o Timestamp para ordenação e outras operações
-            status: 'pending', // Status inicial do agendamento
+            dateTime: appointmentDateTime,
+            status: 'pending',
             createdAt: admin.firestore.FieldValue.serverTimestamp()
         };
 
@@ -335,6 +338,3 @@ exports.createAppointment = async (req, res) => {
         return res.status(500).json({ message: 'Erro interno do servidor ao criar agendamento.' });
     }
 };
-
-// Implementação da função para obter agendamentos por data para o dashboard do barbeiro
-// ... (resto do código)
