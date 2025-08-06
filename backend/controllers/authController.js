@@ -1,27 +1,32 @@
 // backend/controllers/authController.js
 const jwt = require('jsonwebtoken');
+const admin = require('../config/firebase'); // Importe o admin aqui
+const db = admin.firestore(); // Obtenha a instância do Firestore a partir do admin
 
 const authController = {
     async login(req, res) {
         const { email, password } = req.body;
         console.log(`[Backend Auth] Tentativa de login para: ${email}`);
 
+        // A CORREÇÃO ESTÁ AQUI: O ID do barbeiro deve ser consistente
+        // com o ID do documento do Firestore.
+        // Em um projeto real, você buscaria o usuário no banco de dados e usaria
+        // o ID do documento do Firestore (doc.id) para gerar o token.
+        // Como estamos usando dados mockados, ajustamos para o ID correto.
+        const correctBarberId = '10uVBB3Vr4Wu6Xezj9At';
+
         // **DADOS MOCKADOS PARA SIMULAR UM LOGIN BEM-SUCEDIDO**
-        // Em um projeto real, você buscaria o usuário no banco de dados
-        // e verificaria a senha (usando bcrypt, por exemplo).
         if (email === 'teste@barbeiro.com' && password === 'senha123') {
             const barber = {
-                id: '10uVBB3Vr4Wu6Xez9JAt', // ID do barbeiro mockado
+                id: correctBarberId, // ID do barbeiro mockado (CORRIGIDO)
                 name: 'João Barbeiro',
                 email: 'teste@barbeiro.com',
-                role: 'barber' // Indica o papel do usuário (ex: admin, barbeiro, cliente)
+                role: 'barber'
             };
 
             try {
                 // **ATUALIZAÇÃO CRUCIAL AQUI:**
                 // Usando process.env.JWT_SECRET para assinar o token.
-                // Certifique-se de que JWT_SECRET está definido no seu arquivo .env
-                // e que 'dotenv' está configurado no seu index.js.
                 const token = jwt.sign(barber, process.env.JWT_SECRET, { expiresIn: '1h' });
 
                 console.log(`[Backend Auth] Login bem-sucedido para ${email}. Token gerado.`);
