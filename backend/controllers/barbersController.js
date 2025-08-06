@@ -1,14 +1,16 @@
 // backend/controllers/barbersController.js
 
-// O caminho está correto para acessar 'firebase.js' a partir de 'barbersController.js'
-const { db } = require('../config/firebase');
-const { getFirestore } = require('firebase-admin/firestore');
+// CORREÇÃO: O Canvas 'Código Final do Firebase.js' exporta o objeto 'admin'.
+// Precisamos importá-lo e então obter a instância do Firestore a partir dele.
+const admin = require('../config/firebase');
+const db = admin.firestore();
 
 // Função para obter estatísticas do dashboard
 exports.getDashboardStats = async (req, res) => {
     try {
         // req.user.id virá do middleware de autenticação (authMiddleware)
-        const barberId = req.user.id; 
+        // CERTIFIQUE-SE DE QUE O JWT RETORNA O ID DO DOCUMENTO DO FIRESTORE (e não um campo 'barberId' do documento)
+        const barberId = req.user.id;
         
         if (!barberId) {
             console.error('getDashboardStats: barberId não encontrado na requisição (possivelmente authMiddleware não adicionou).');
@@ -17,8 +19,7 @@ exports.getDashboardStats = async (req, res) => {
 
         console.log(`Buscando estatísticas para o barbeiro com ID: ${barberId}`);
 
-        const firestore = getFirestore();
-        const collectionRef = firestore.collection('appointment_schedules');
+        const collectionRef = db.collection('appointment_schedules');
         const q = collectionRef.where('barberId', '==', barberId);
         const querySnapshot = await q.get();
 
@@ -57,7 +58,8 @@ exports.getDashboardStats = async (req, res) => {
 // Função para definir/atualizar os dias de disponibilidade do barbeiro
 exports.setAvailableDays = async (req, res) => {
     try {
-        const barberId = req.user.id; // Assume que o ID do barbeiro vem do token JWT
+        // Use o ID do documento do barbeiro (id do token JWT)
+        const barberId = req.user.id;
         const { availableDates } = req.body; 
 
         if (!barberId) {
@@ -67,8 +69,7 @@ exports.setAvailableDays = async (req, res) => {
             return res.status(400).json({ message: 'Dados de disponibilidade inválidos. Esperado um array.' });
         }
 
-        const firestore = getFirestore();
-        const docRef = firestore.collection('barber_available_days').doc(barberId);
+        const docRef = db.collection('barber_available_days').doc(barberId);
         await docRef.set({ dates: availableDates }); // Salva como um array no campo 'dates'
 
         return res.status(200).json({ message: 'Disponibilidade salva com sucesso!' });
@@ -89,8 +90,7 @@ exports.getAvailableDays = async (req, res) => {
             return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
         }
 
-        const firestore = getFirestore();
-        const docRef = firestore.collection('barber_available_days').doc(barberId);
+        const docRef = db.collection('barber_available_days').doc(barberId);
         console.log(`[getAvailableDays] Tentando buscar documento: barber_available_days/${barberId}`);
         const docSnapshot = await docRef.get();
 
@@ -115,23 +115,23 @@ exports.getAvailableDays = async (req, res) => {
 // Implementação da função para obter a lista de barbeiros
 exports.getBarbers = async (req, res) => {
     try {
-        const firestore = getFirestore();
-        const barbersRef = firestore.collection('barbers'); 
+        const barbersRef = db.collection('barbers');
         console.log('[getBarbers] Buscando documentos na coleção "barbers".');
         const snapshot = await barbersRef.get();
 
         if (snapshot.empty) {
             console.log('[getBarbers] Nenhum barbeiro encontrado na coleção "barbers".');
-            return res.status(200).json([]); 
+            return res.status(200).json([]);
         }
 
         const barbers = [];
-        for (const doc of snapshot.docs) { 
+        for (const doc of snapshot.docs) {
+            // AQUI É O PONTO CRÍTICO: use doc.id como o ID canônico do barbeiro.
             const barberData = { id: doc.id, ...doc.data() };
             console.log(`[getBarbers] Processando barbeiro: ${barberData.id}, nome: ${barberData.name}`);
 
-            // Busca os dias de disponibilidade para cada barbeiro
-            const availabilityDocRef = firestore.collection('barber_available_days').doc(barberData.id);
+            // Busca os dias de disponibilidade para cada barbeiro usando o ID do documento
+            const availabilityDocRef = db.collection('barber_available_days').doc(barberData.id);
             console.log(`[getBarbers] Tentando buscar disponibilidade para: barber_available_days/${barberData.id}`);
             const availabilitySnapshot = await availabilityDocRef.get();
             
@@ -167,7 +167,8 @@ exports.getAvailableTimeSlots = async (req, res) => {
             return res.status(400).json({ message: 'ID do barbeiro e data são obrigatórios.' });
         }
 
-        const firestore = getFirestore();
+        // Use a instância do Firestore obtida no início do arquivo
+        const appointmentsRef = db.collection('appointment_schedules');
         
         // 1. Obter os horários de trabalho padrão do barbeiro (se existirem)
         // Por exemplo, você pode ter uma coleção 'barber_settings' ou campos no documento do barbeiro
@@ -185,7 +186,6 @@ exports.getAvailableTimeSlots = async (req, res) => {
         }
 
         // 2. Obter agendamentos existentes para o barbeiro na data específica
-        const appointmentsRef = firestore.collection('appointment_schedules');
         const q = appointmentsRef
             .where('barberId', '==', barberId)
             .where('date', '==', date); // Assumindo que você salva a data como string 'YYYY-MM-DD'
@@ -230,7 +230,8 @@ exports.getAvailableTimeSlots = async (req, res) => {
 exports.getAppointmentsByDate = async (req, res) => {
     console.log('[getAppointmentsByDate] Buscando agendamentos por data para o dashboard...');
     try {
-        const barberId = req.user.id; // Assume que o ID do barbeiro vem do token JWT
+        // Use o ID do documento do barbeiro (id do token JWT)
+        const barberId = req.user.id;
         const { date, month, year } = req.query; // Pode vir uma data específica ou mês/ano
 
         if (!barberId) {
@@ -238,8 +239,8 @@ exports.getAppointmentsByDate = async (req, res) => {
             return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
         }
 
-        const firestore = getFirestore();
-        const appointmentsRef = firestore.collection('appointment_schedules');
+        // Use a instância do Firestore obtida no início do arquivo
+        const appointmentsRef = db.collection('appointment_schedules');
         let q = appointmentsRef.where('barberId', '==', barberId);
 
         if (date) {
@@ -248,14 +249,7 @@ exports.getAppointmentsByDate = async (req, res) => {
             console.log(`[getAppointmentsByDate] Buscando agendamentos para o barbeiro ${barberId} na data: ${date}`);
         } else if (month !== undefined && year !== undefined) {
             // Se mês e ano forem fornecidos (para o calendário de marcação)
-            // Firebase não permite query por substring ou mês/ano diretamente em Timestamp
-            // Assumimos que 'date' é salvo como 'YYYY-MM-DD' para facilitar a query por mês/ano
-            // Ou que 'dateTime' é um Timestamp e precisamos filtrar no cliente ou ajustar a query
-            // Para evitar problemas de índice e simplificar, vamos buscar todos os agendamentos do barbeiro
-            // e filtrar por mês/ano no código, se a data não for fornecida.
             console.warn('[getAppointmentsByDate] Buscando agendamentos por mês/ano sem campo indexado. Pode ser ineficiente para muitos dados.');
-            // A rota do frontend para marcar dias no calendário de agendamentos (fetchAndMarkAppointmentsInCalendar)
-            // já envia month e year. Vamos buscar todos os agendamentos do barbeiro e filtrar pelo mês/ano.
         } else {
             return res.status(400).json({ message: 'Data ou mês/ano são obrigatórios.' });
         }
