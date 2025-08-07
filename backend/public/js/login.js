@@ -5,27 +5,36 @@
 // Exemplo: <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
 
 // A URL base do seu backend.
+// É CRUCIAL que esta URL esteja correta e aponte para a sua aplicação no Render.
+// O sufixo '/api' já está incluído aqui, então não o adicione novamente na rota de fetch.
 const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com/api';
 
-// Configuração do Firebase Client - Você deve preencher com as suas credenciais.
+// Configuração do Firebase Client - VOCÊ PRECISA PREENCHER ISTO COM AS SUAS CREDENCIAIS.
+// Obtenha estas informações do seu console do Firebase no projeto que você criou.
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "YOUR_API_KEY", // <--- PREENCHA AQUI
+    authDomain: "YOUR_AUTH_DOMAIN", // <--- PREENCHA AQUI
+    projectId: "YOUR_PROJECT_ID", // <--- PREENCHA AQUI
+    storageBucket: "YOUR_STORAGE_BUCKET", // <--- PREENCHA AQUI
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <--- PREENCHA AQUI
+    appId: "YOUR_APP_ID" // <--- PREENCHA AQUI
 };
 
 // Inicializa o Firebase
-if (!firebase.apps.length) {
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
-const auth = firebase.auth();
+const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const loginMessage = document.getElementById('loginMessage');
+
+    // Verifica se os elementos e o Firebase Auth foram inicializados
+    if (!loginForm || !loginMessage || !auth) {
+        console.error('Erro: Elementos do DOM ou Firebase Auth não encontrados. Verifique seu HTML e a configuração do Firebase.');
+        return;
+    }
 
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -53,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const idToken = await user.getIdToken();
 
             // 3. Envia o ID Token para o backend para obter os dados do barbeiro.
+            // A rota completa será: https://barbearia-backend-9h56.onrender.com/api/auth/profile
             const response = await fetch(`${API_BASE_URL}/auth/profile`, {
                 method: 'POST',
                 headers: {
@@ -87,6 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage = 'Usuário não encontrado.';
             } else if (error.code === 'auth/wrong-password') {
                 errorMessage = 'Senha incorreta.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = 'Endereço de e-mail inválido.';
             }
             loginMessage.textContent = errorMessage;
             loginMessage.classList.add('text-red-500');
