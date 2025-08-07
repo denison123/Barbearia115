@@ -1,243 +1,138 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia 115</title>
+    <title>Login - Barbearia</title>
+    <!-- Adiciona o Tailwind CSS para estilização -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Estilos específicos para o slider */
-        .slider-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px; /* Ajuste conforme necessário */
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .slider-image {
-            width: 100%;
-            display: none; /* Oculta todas as imagens por padrão, o JS mostrará a ativa */
-            border-radius: 8px;
-            object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
-            height: 300px; /* Altura fixa para as imagens do slider */
-        }
-
-        .slider-image.active {
-            display: block; /* Mostra a imagem ativa */
-        }
-
-        .slider-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 1.5rem;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-        }
-
-        .slider-button:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        .slider-dots {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .dot.active {
-            background-color: white;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
     </style>
+    <!-- Importa os SDKs do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
 </head>
-<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col items-center justify-center">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <!-- Header Principal -->
-    <header class="main-header">
-        <div class="logo">
-            <!-- Certifique-se de que esta imagem tem o fundo transparente e o nome do arquivo correto (ex: .png) -->
-            <img src="imag/barbearia-115.jpeg" alt="Logotipo Barbearia 115" class="h-10 rounded-lg mr-2">
-            <span class="text-yellow-400 font-bold text-xl">Barbearia 115</span>
-        </div>
-        <nav class="main-nav">
-            <a href="login.html" class="login-btn">Área do Barbeiro</a>
-            <a href="#appointment-section" class="book-now-btn">Agende Agora</a>
-        </nav>
-    </header>
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Login do Barbeiro</h1>
 
-    <!-- Seção Hero (Banner Principal) -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">Estilo e Tradição em Cada Corte</h1>
-            <p class="hero-subtitle">Transformando visuais com paixão e precisão.</p>
-            <a href="#appointment-section" class="hero-button">Agende seu Horário</a>
-        </div>
-    </section>
+        <form id="loginForm">
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <input type="email" id="email" name="email" placeholder="seu-email@exemplo.com" required
+                       class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Senha</label>
+                <input type="password" id="password" name="password" placeholder="Sua senha" required
+                       class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 w-full">
+                    Entrar
+                </button>
+            </div>
+        </form>
 
-    <!-- Seção Sobre Nós -->
-    <section class="about-us-section">
-        <div class="about-content">
-            <div class="about-image">
-                <!-- Slider de Fotos -->
-                <div class="slider-container" id="service-slider">
-                    <img src="./imag/foto1.JPG" alt="" class="slider-image active">
-                    <img src="./imag/foto2.JPG" alt="" class="slider-image active">
-                    <img src="./imag/foto3.JPG" alt="" class="slider-image active">
-                    <img src="./imag/foto4.JPG" alt="" class="slider-image active">
-                    <img src="./imag/foto5.JPG" alt="" class="slider-image active">
-                    <img src="./imag/foto6.JPG" alt="" class="slider-image active">
-                    <img src="./imag/foto7.JPG" alt="" class="slider-image active">
-                    <img src="./imag/logo.jpg" alt="" class="slider-image active">
-                    
-                    <button class="slider-button prev-slide">&lt;</button>
-                    <button class="slider-button next-slide">&gt;</button>
-                    <div class="slider-dots"></div>
-                </div>
-            </div>
-            <div class="about-text">
-                <h2 class="text-yellow-400 text-3xl font-bold mb-4">Sobre Nós</h2>
-                <p class="text-gray-300 mb-4">Na Barbearia 115, combinamos tradição e modernidade para oferecer uma experiência única em cuidados masculinos. Nossos barbeiros são especialistas em criar o visual perfeito para você, seja um corte clássico ou as últimas tendências.</p>
-                <p class="text-gray-300 mb-4">Nosso ambiente é pensado para o seu conforto e relaxamento, com atendimento personalizado e produtos de alta qualidade. Venha nos visitar e descubra a diferença de um serviço feito com paixão e precisão.</p>
-                <p class="text-gray-300">Siga-nos no Instagram: <a href="https://instagram.com/barbearia_115" target="_blank" class="text-yellow-400 hover:underline">@barbearia_115</a></p>
-            </div>
-        </div>
-    </section>
+        <div id="loginMessage" class="mt-6 text-center text-sm font-semibold"></div>
+    </div>
 
-    <!-- Seção de Serviços (Exemplo) -->
-    <section class="services-section" id="services-section">
-        <h2 class="text-yellow-400 text-3xl font-bold mb-8 text-center">Nossos Serviços</h2>
-        <div class="services-grid">
-            <div class="service-card">
-                <h3 class="text-xl font-semibold text-white mb-2">Serviço 1</h3>
-                <p class="text-gray-300">O que o serviço 1 oferece.</p>
-            </div>
-            <div class="service-card">
-                <h3 class="text-xl font-semibold text-white mb-2">Serviço 2</h3>
-                <p class="text-gray-300">O que o serviço 2 oferece.</p>
-            </div>
-            <div class="service-card">
-                <h3 class="text-xl font-semibold text-white mb-2">Serviço 3</h3>
-                <p class="text-gray-300">O que o serviço 3 oferece.</p>
-            </div>
-            <div class="service-card">
-                <h3 class="text-xl font-semibold text-white mb-2">Serviço 4</h3>
-                <p class="text-gray-300">O que o serviço 4 oferece.</p>
-            </div>
-            <div class="service-card">
-                <h3 class="text-xl font-semibold text-white mb-2">Serviço 5</h3>
-                <p class="text-gray-300">O que o serviço 5 oferece.</p>
-            </div>
-            <div class="service-card">
-                <h3 class="text-xl font-semibold text-white mb-2">Serviço 6</h3>
-                <p class="text-gray-300">O que o serviço 6 oferece.</p>
-            </div>
-        </div>
-    </section>
+    <!-- Script JavaScript para a lógica de login -->
+    <script>
+        // O código JavaScript corrigido
+        const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com/api';
 
-    <!-- Seção de Agendamento -->
-    <section class="appointment-section" id="appointment-section">
-        <div class="appointment-page-container">
-            <div class="calendar-section">
-                <h2 class="text-yellow-400 text-3xl font-bold mb-4 text-center">Agende seu Horário</h2>
-                <div class="form-group mb-4">
-                    <label for="barber-select" class="block text-gray-300 text-sm font-bold mb-2">Selecione o Barbeiro:</label>
-                    <select id="barber-select" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400"></select>
-                </div>
-                <div class="calendar-navigation">
-                    <button id="prev-month" class="nav-button">&lt; Anterior</button>
-                    <span id="current-month-year">Mês Ano</span>
-                    <button id="next-month" class="nav-button">Próximo &gt;</button>
-                </div>
-                <div id="calendar-grid" class="calendar-grid">
-                    <!-- Dias da semana e dias do mês serão injetados aqui pelo JS -->
-                    <div class="font-bold text-gray-400">Dom</div>
-                    <div class="font-bold text-gray-400">Seg</div>
-                    <div class="font-bold text-gray-400">Ter</div>
-                    <div class="font-bold text-gray-400">Qua</div>
-                    <div class="font-bold text-gray-400">Qui</div>
-                    <div class="font-bold text-gray-400">Sex</div>
-                    <div class="font-bold text-gray-400">Sáb</div>
-                </div>
-                <div class="available-times-section">
-                    <h3 class="text-yellow-400 text-2xl font-semibold mb-3 text-center">Horários Disponíveis</h3>
-                    <div id="available-times-list" class="flex flex-wrap justify-center gap-2">
-                        <p class="text-gray-400">Selecione uma data para ver os horários.</p>
-                    </div>
-                </div>
-            </div>
+        // **IMPORTANTE**: Substitua os placeholders abaixo com as suas credenciais do Firebase.
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-            <div class="details-section">
-                <h2 class="text-yellow-400 text-3xl font-bold mb-4 text-center">Detalhes do Agendamento</h2>
-                <div class="form-group">
-                    <label for="selected-date" class="block text-gray-300 text-sm font-bold mb-2">Data Selecionada:</label>
-                    <input type="text" id="selected-date" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="selected-time" class="block text-gray-300 text-sm font-bold mb-2">Hora Selecionada:</label>
-                    <input type="text" id="selected-time" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="customer-name-input" class="block text-gray-300 text-sm font-bold mb-2">Seu Nome:</label>
-                    <input type="text" id="customer-name-input" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" required>
-                </div>
-                <div class="form-group">
-                    <label for="customer-phone-input" class="block text-gray-300 text-sm font-bold mb-2">Seu Telefone:</label>
-                    <input type="tel" id="customer-phone-input" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400">
-                </div>
-                <div class="form-group">
-                    <label for="service-select" class="block text-gray-300 text-sm font-bold mb-2">Serviço:</label>
-                    <select id="service-select" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" required>
-                        <option value="">Selecione um Serviço</option>
-                        <option value="Corte de Cabelo">Corte de Cabelo</option>
-                        <option value="Barba Modelada">Barba Modelada</option>
-                        <option value="Combo (Corte + Barba)">Combo (Corte + Barba)</option>
-                        <option value="Tratamento Capilar">Tratamento Capilar</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="payment-method-select" class="block text-gray-300 text-sm font-bold mb-2">Forma de Pagamento:</label>
-                    <select id="payment-method-select" class="w-full p-3 rounded-lg bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-yellow-400" required>
-                        <option value="">Selecione a Forma de Pagamento</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito</option>
-                        <option value="Cartão de Débito">Cartão de Débito</option>
-                        <option value="Pix">Pix</option>
-                    </select>
-                </div>
-                <button id="confirm-appointment-button" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-full w-full transition duration-300">Confirmar Agendamento</button>
-                <p id="appointment-message" class="mt-4 text-center font-semibold"></p>
-            </div>
-        </div>
-    </section>
+        // Inicializa o Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <p>&copy; 2025 Barbearia 115. Todos os direitos reservados.</p>
-    </footer>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const loginMessage = document.getElementById('loginMessage');
 
-    <script src="js/script.js"></script>
-    <script src="js/slider.js"></script>
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                loginMessage.textContent = '';
+                loginMessage.className = 'mt-4 text-center text-sm sm:text-lg font-semibold';
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                if (!email || !password) {
+                    loginMessage.textContent = 'Por favor, preencha todos os campos.';
+                    loginMessage.classList.add('text-red-500');
+                    return;
+                }
+
+                try {
+                    loginMessage.textContent = 'Autenticando...';
+                    loginMessage.classList.add('text-blue-400');
+
+                    // 1. O cliente do Firebase faz o login e verifica a senha de forma segura.
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+
+                    // 2. Obtém o ID Token, que é a prova de autenticação do usuário.
+                    const idToken = await user.getIdToken();
+
+                    // 3. Envia o ID Token para o backend para obter os dados do barbeiro.
+                    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${idToken}`
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // 4. Armazena o ID Token e os dados do barbeiro no localStorage.
+                        localStorage.setItem('token', idToken);
+                        localStorage.setItem('barber', JSON.stringify(data.barber));
+
+                        loginMessage.textContent = 'Login bem-sucedido!';
+                        loginMessage.classList.add('text-green-500');
+
+                        setTimeout(() => {
+                            window.location.href = 'barber-dashboard.html';
+                        }, 1000);
+                    } else {
+                        loginMessage.textContent = data.message || 'Erro ao buscar dados do barbeiro.';
+                        loginMessage.classList.add('text-red-500');
+                        console.error('Erro no backend após autenticação:', data.message);
+                    }
+                } catch (error) {
+                    let errorMessage = 'Erro ao fazer login. Verifique seu email e senha.';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'Usuário não encontrado.';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Senha incorreta.';
+                    }
+                    loginMessage.textContent = errorMessage;
+                    loginMessage.classList.add('text-red-500');
+                    console.error('Erro de login do Firebase:', error);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
