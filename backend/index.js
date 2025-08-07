@@ -19,16 +19,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
 
-// Rota de teste
-// Esta rota agora não é mais a principal e foi removida para que a rota '/' sirva o index.html
-// app.get('/', (req, res) => {
-//    res.send('Backend da Barbearia 115 está rodando!');
-// });
-
-// CORREÇÃO: Nova rota raiz que servirá o arquivo index.html,
-// permitindo que o frontend seja carregado corretamente.
+// CORREÇÃO: Esta rota principal serve o arquivo index.html,
+// que é o ponto de entrada da sua aplicação de frontend.
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Rota para servir o arquivo login.html diretamente
+// Acessível em https://barbearia-backend-9h56.onrender.com/login.html
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 // Importar e usar rotas da API
@@ -37,11 +37,10 @@ const barberRoutes = require('./routes/barbers');
 app.use('/api/auth', authRoutes);
 app.use('/api/barber', barberRoutes);
 
-// Rota para servir o arquivo login.html diretamente
-app.get('/login.html', (req, res) => {
-    // A rota deve apontar para o caminho correto do seu arquivo HTML
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
+// A rota de dashboard também é uma parte do frontend e é servida por express.static
+// app.get('/barber-dashboard.html', (req, res) => {
+//    res.sendFile(path.join(__dirname, 'public', 'barber-dashboard.html'));
+// });
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
