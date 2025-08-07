@@ -2,41 +2,40 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const cors = require('cors'); // Importa a biblioteca CORS
+const cors = require('cors');
 
-// --- GARANTA QUE O FIREBASE ADMIN SDK SEJA INICIALIZADO ---
-// Apenas importe o arquivo de configuração do Firebase para garantir que ele seja executado
-// e o SDK seja inicializado.
+// Certifique-se de que o Firebase Admin SDK seja inicializado
 require('./config/firebase');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- Middlewares CORS (Solução com a biblioteca 'cors') ---
-// Em ambientes de produção, é altamente recomendável especificar a origem do seu frontend
-// para maior segurança. Ex: cors({ origin: 'http://localhost:3000' });
+// Middlewares para CORS e análise do corpo da requisição
 app.use(cors());
-
-// Middlewares para análise do corpo da requisição
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Importar rotas
-const authRoutes = require('./routes/auth');
-const barberRoutes = require('./routes/barbers');
-
-// Servir arquivos estáticos da pasta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
-console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
-
-// Usar rotas
-app.use('/api/auth', authRoutes);
-app.use('/api/barber', barberRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {
     res.send('Backend da Barbearia 115 está rodando!');
 });
+
+// Importar e usar rotas da API
+const authRoutes = require('./routes/auth');
+const barberRoutes = require('./routes/barbers');
+app.use('/api/auth', authRoutes);
+app.use('/api/barber', barberRoutes);
+
+// --- NOVA ROTA ADICIONADA ---
+// Rota para servir o arquivo login.html diretamente
+app.get('/login.html', (req, res) => {
+    // A rota deve apontar para o caminho correto do seu arquivo HTML
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Servir arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
