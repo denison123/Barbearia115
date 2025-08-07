@@ -15,18 +15,19 @@ exports.getDashboardStats = async (req, res) => {
 
         console.log(`Buscando estatísticas para o barbeiro com ID: ${barberId}`);
 
-        // Obter o início e o fim do mês atual para filtrar os agendamentos
+        // Obter o ano e mês atuais para filtrar os agendamentos
         const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+        const year = now.getFullYear().toString();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
 
         const collectionRef = db.collection('appointment_schedules');
         
+        // CORREÇÃO: Ajuste na query para usar 'date' como string
         const q = collectionRef
                     .where('barberId', '==', barberId)
-                    .where('dateTime', '>=', startOfMonth)
-                    .where('dateTime', '<=', endOfMonth)
-                    .orderBy('dateTime', 'asc');
+                    .where('date', '>=', `${year}-${month}-01`)
+                    .where('date', '<=', `${year}-${month}-31`) // Filtro simplificado, mas funcional
+                    .orderBy('date', 'asc');
 
         const querySnapshot = await q.get();
 
