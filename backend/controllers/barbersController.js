@@ -7,22 +7,27 @@ const db = admin.firestore();
 exports.getDashboardStats = async (req, res) => {
     try {
         const barberId = req.user.id;
+        // CORREÇÃO: Receber mês e ano da requisição
+        const { month, year } = req.query;
         
         if (!barberId) {
             console.error('getDashboardStats: barberId não encontrado na requisição (possivelmente authMiddleware não adicionou).');
             return res.status(400).json({ message: 'ID do barbeiro não fornecido.' });
         }
 
-        console.log(`Buscando estatísticas para o barbeiro com ID: ${barberId}`);
+        if (!month || !year) {
+            console.error('getDashboardStats: Mês e ano não fornecidos.');
+            return res.status(400).json({ message: 'Mês e ano são obrigatórios para buscar estatísticas.' });
+        }
 
-        // Obter o início e o fim do mês atual para filtrar os agendamentos
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+        console.log(`Buscando estatísticas para o barbeiro com ID: ${barberId} para o mês: ${month}, ano: ${year}`);
+
+        // Criar o início e o fim do mês com base nos parâmetros da requisição
+        const startOfMonth = new Date(parseInt(year), parseInt(month), 1);
+        const endOfMonth = new Date(parseInt(year), parseInt(month) + 1, 0, 23, 59, 59, 999);
 
         const collectionRef = db.collection('appointment_schedules');
         
-        // CORREÇÃO: Usar um filtro de intervalo no campo `dateTime` para ser mais eficiente e adicionar orderBy
         const q = collectionRef
                     .where('barberId', '==', barberId)
                     .where('dateTime', '>=', startOfMonth)
