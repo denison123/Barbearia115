@@ -19,10 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
 
-// Rota principal que serve o index.html.
-// Esta rota é o ponto de entrada da sua aplicação de frontend (SPA - Single Page Application).
-// Qualquer outra rota do frontend (como '/login', '/dashboard', etc.) será gerenciada
-// pelo JavaScript do lado do cliente (navegador).
+// Rota principal que serve o index.html para todas as rotas do frontend.
+// O '/*' captura todas as rotas que não são APIs, permitindo que o roteamento
+// do lado do cliente (via JavaScript) funcione.
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
