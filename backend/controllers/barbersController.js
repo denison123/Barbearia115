@@ -22,13 +22,11 @@ exports.getDashboardStats = async (req, res) => {
 
         const collectionRef = db.collection('appointment_schedules');
         
-        // CORREÇÃO: Adicionar filtros de data para obter apenas os agendamentos do mês atual
-        // ADICIONAR orderBy para suportar a consulta de intervalo de data
         const q = collectionRef
                     .where('barberId', '==', barberId)
                     .where('dateTime', '>=', startOfMonth)
                     .where('dateTime', '<=', endOfMonth)
-                    .orderBy('dateTime', 'asc'); // Adicionamos orderBy para resolver o erro
+                    .orderBy('dateTime', 'asc');
 
         const querySnapshot = await q.get();
 
@@ -38,6 +36,7 @@ exports.getDashboardStats = async (req, res) => {
 
         querySnapshot.forEach(doc => {
             const data = doc.data();
+            // CORREÇÃO: Verificação correta do status para contagem
             if (data.status === 'completed') {
                 completedAppointments++;
             } else if (data.status === 'pending') {
@@ -259,7 +258,13 @@ exports.getAppointmentsByDate = async (req, res) => {
 
         querySnapshot.forEach(doc => {
             const data = doc.data();
-            appointments.push({ id: doc.id, ...data });
+            appointments.push({ 
+                id: doc.id,
+                ...data,
+                // CORREÇÃO: Mapear os dados para garantir que a resposta tenha os campos esperados
+                customerName: data.clientName,
+                customerPhone: data.clientPhone
+            });
         });
 
         console.log(`[getAppointmentsByDate] Agendamentos encontrados:`, appointments);
@@ -319,6 +324,7 @@ exports.createAppointment = async (req, res) => {
 
         const newAppointment = {
             barberId,
+            // CORREÇÃO: Salvar os dados do cliente com as chaves corretas
             clientName: customerName,
             clientPhone: customerPhone,
             service,
