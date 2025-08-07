@@ -2,34 +2,20 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-// Não precisamos mais do 'admin' aqui, pois a inicialização será feita em firebase.js
-// const admin = require('firebase-admin');
+const cors = require('cors'); // Importa a biblioteca CORS
 
 // --- GARANTA QUE O FIREBASE ADMIN SDK SEJA INICIALIZADO ---
 // Apenas importe o arquivo de configuração do Firebase para garantir que ele seja executado
 // e o SDK seja inicializado.
-require('./config/firebase'); // Isso irá executar o código em firebase.js
+require('./config/firebase');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- Middlewares CORS (Solução Definitiva) ---
-// Middleware para lidar com todas as requisições de pré-voo (OPTIONS) e definir os cabeçalhos CORS
-app.use((req, res, next) => {
-    // Definir os cabeçalhos CORS para permitir acesso de qualquer origem
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-    // Se a requisição for do tipo OPTIONS, respondemos com status 200 e terminamos o fluxo
-    if (req.method === 'OPTIONS') {
-        console.log('Requisição OPTIONS recebida, respondendo com 200 OK.');
-        return res.sendStatus(200);
-    }
-    
-    // Se não for uma requisição OPTIONS, continuamos para o próximo middleware/rota
-    next();
-});
+// --- Middlewares CORS (Solução com a biblioteca 'cors') ---
+// Em ambientes de produção, é altamente recomendável especificar a origem do seu frontend
+// para maior segurança. Ex: cors({ origin: 'http://localhost:3000' });
+app.use(cors());
 
 // Middlewares para análise do corpo da requisição
 app.use(express.json());
