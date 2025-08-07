@@ -1,78 +1,81 @@
 // js/login.js
+// Certifique-se de ter importado o SDK do Firebase Client no seu HTML.
+// Exemplo: <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+// Exemplo: <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
 
-// URL base do seu backend
-//
-// A URL do seu backend no Render é: https://barbearia-backend-9h56.onrender.com/api
-//
-// Certifique-se de que esta URL corresponde ao endereço do seu servidor Express
+const firebaseConfig = {
+  // SUAS CONFIGURAÇÕES DE CLIENTE DO FIREBASE AQUI
+  // Exemplo: apiKey, authDomain, projectId, etc.
+};
+
+// Inicialize o Firebase se ainda não foi inicializado
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+
 const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com/api';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Seleciona o formulário de login e o elemento para exibir mensagens
     const loginForm = document.getElementById('loginForm');
     const loginMessage = document.getElementById('loginMessage');
 
-    // Adiciona um listener para o evento de submissão do formulário
     loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Previne o comportamento padrão de recarregar a página
-
-        // Limpa mensagens anteriores
+        event.preventDefault();
         loginMessage.textContent = '';
-        loginMessage.className = 'mt-4 text-center text-sm sm:text-lg font-semibold'; // Resetar classes
+        loginMessage.className = 'mt-4 text-center text-sm sm:text-lg font-semibold';
 
-        // Obtém os valores dos campos de email e senha
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        // Validação básica (opcional, mas recomendado)
         if (!email || !password) {
             loginMessage.textContent = 'Por favor, preencha todos os campos.';
-            loginMessage.classList.add('text-red-500'); // Adiciona classe de erro
+            loginMessage.classList.add('text-red-500');
             return;
         }
 
         try {
-            // Exibe uma mensagem de carregamento
             loginMessage.textContent = 'Autenticando...';
             loginMessage.classList.add('text-blue-400');
 
-            // Faz a requisição POST para o endpoint de login do backend
+            // 1. Faz a requisição para o backend para obter o Custom Token
             const response = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }), // Envia email e senha como JSON
+                body: JSON.stringify({ email, password }),
             });
 
-            const data = await response.json(); // Converte a resposta para JSON
+            const data = await response.json();
 
             if (response.ok) {
-                // Login bem-sucedido
-                loginMessage.textContent = data.message || 'Login bem-sucedido!';
+                // 2. Usa o Custom Token para fazer login no Firebase do lado do cliente
+                const userCredential = await auth.signInWithCustomToken(data.token);
+                const user = userCredential.user;
+
+                // 3. Obtém o Token de ID válido do Firebase
+                const idToken = await user.getIdToken();
+                
+                // 4. Armazena o Token de ID e os dados do barbeiro no localStorage
+                localStorage.setItem('token', idToken);
+                localStorage.setItem('barber', JSON.stringify(data.barber));
+
+                loginMessage.textContent = 'Login bem-sucedido!';
                 loginMessage.classList.add('text-green-500');
 
-                // Armazena o token JWT e os dados do barbeiro no localStorage
-                // Isso é crucial para manter o usuário logado e para futuras requisições autenticadas
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('barber', JSON.stringify(data.barber)); // Armazena como string JSON
-
-                // Redireciona para o dashboard do barbeiro após um pequeno atraso
                 setTimeout(() => {
                     window.location.href = 'barber-dashboard.html';
-                }, 1000); // Atraso de 1 segundo para o usuário ver a mensagem de sucesso
-
+                }, 1000);
             } else {
-                // Login falhou (ex: credenciais inválidas)
                 loginMessage.textContent = data.message || 'Erro ao fazer login. Tente novamente.';
                 loginMessage.classList.add('text-red-500');
                 console.error('Erro de login:', data.message);
             }
         } catch (error) {
-            // Erro de rede ou servidor
-            loginMessage.textContent = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+            loginMessage.textContent = 'Não foi possível conectar ou autenticar. Verifique suas credenciais.';
             loginMessage.classList.add('text-red-500');
-            console.error('Erro na requisição de login:', error);
+            console.error('Erro na requisição ou no Firebase:', error);
         }
     });
 });

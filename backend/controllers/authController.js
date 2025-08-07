@@ -1,53 +1,41 @@
 // backend/controllers/authController.js
-const jwt = require('jsonwebtoken');
-const admin = require('../config/firebase'); // Importe o admin aqui
-const db = admin.firestore(); // Obtenha a instância do Firestore a partir do admin
+const { admin } = require('../config/firebase');
 
-const authController = {
-    async login(req, res) {
-        const { email, password } = req.body;
-        console.log(`[Backend Auth] Tentativa de login para: ${email}`);
+exports.loginBarber = async (req, res) => {
+    const { email, password } = req.body;
 
-        // A CORREÇÃO ESTÁ AQUI: O ID do barbeiro deve ser consistente
-        // com o ID do documento do Firestore.
-        // Em um projeto real, você buscaria o usuário no banco de dados e usaria
-        // o ID do documento do Firestore (doc.id) para gerar o token.
-        // Como estamos usando dados mockados, ajustamos para o ID correto.
-        const correctBarberId = '10uVBB3Vr4Wu6Xezj9At';
+    try {
+        // 1. Encontra o usuário do Firebase com base no email fornecido
+        const userRecord = await admin.auth().getUserByEmail(email);
 
-        // **DADOS MOCKADOS PARA SIMULAR UM LOGIN BEM-SUCEDIDO**
-        if (email === 'teste@barbeiro.com' && password === 'senha123') {
-            const barber = {
-                id: correctBarberId, // ID do barbeiro mockado (CORRIGIDO)
-                name: 'João Barbeiro',
-                email: 'teste@barbeiro.com',
-                role: 'barber'
-            };
+        // 2. IMPORTANTE: Em um cenário real, você faria uma verificação da senha aqui.
+        // Como o Firebase Admin SDK não tem uma função para verificar senhas
+        // diretamente (isso é feito no lado do cliente), esta é uma simplificação.
+        // Você precisaria de uma forma de verificar a senha, talvez com um banco
+        // de dados secundário ou um serviço de autenticação personalizado.
 
-            try {
-                // **ATUALIZAÇÃO CRUCIAL AQUI:**
-                // Usando process.env.JWT_SECRET para assinar o token.
-                const token = jwt.sign(barber, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // 3. Se a verificação de credenciais for bem-sucedida, crie um Custom Token.
+        // O Custom Token é um "bilhete" que o cliente usará para se autenticar.
+        const customToken = await admin.auth().createCustomToken(userRecord.uid);
 
-                console.log(`[Backend Auth] Login bem-sucedido para ${email}. Token gerado.`);
-                return res.status(200).json({
-                    message: 'Login bem-sucedido',
-                    token,
-                    barber: {
-                        id: barber.id,
-                        name: barber.name,
-                        email: barber.email
-                    }
-                });
-            } catch (jwtError) {
-                console.error('[Backend Auth] Erro ao gerar token JWT:', jwtError);
-                return res.status(500).json({ message: 'Erro interno do servidor ao gerar token.' });
-            }
-        } else {
-            console.warn(`[Backend Auth] Tentativa de login falhou para: ${email}. Credenciais inválidas.`);
-            return res.status(401).json({ message: 'Credenciais inválidas.' });
+        // 4. Busca os dados do barbeiro no Firestore para enviar ao cliente
+        const barberDoc = await admin.firestore().collection('barbers').doc(userRecord.uid).get();
+
+        if (!barberDoc.exists) {
+            return res.status(404).json({ message: 'Dados do barbeiro não encontrados.' });
         }
-    },
-};
 
-module.exports = authController;
+        const barberData = { id: barberDoc.id, ...barberDoc.data() };
+        
+        // 5. Envia o Custom Token e os dados do barbeiro para o cliente
+        // O cliente usará este token para obter o Token de ID real.
+        res.status(200).json({ 
+            message: 'Login bem-sucedido. Use o token personalizado para autenticar o cliente.', 
+            token: customToken,
+            barber: barberData
+        });
+    } catch (error) {
+        console.error('Erro no login:', error);
+        res.status(401).json({ message: 'Credenciais inválidas ou erro no servidor.' });
+    }
+};
