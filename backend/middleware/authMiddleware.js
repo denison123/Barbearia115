@@ -1,19 +1,9 @@
 // backend/middleware/authMiddleware.js
 // Middleware de autenticação que verifica o token JWT do Firebase.
 
-// Importa o módulo de administrador do Firebase
-// Certifique-se de que a sua aplicação Firebase foi inicializada
-// em um arquivo de configuração no seu backend.
+// O objeto 'admin' é importado aqui e deve ser inicializado em um arquivo de
+// configuração global, como 'config/firebase.js', para ser usado aqui.
 const admin = require('firebase-admin');
-
-// -------------------------------------------------------------
-// IMPORTANTE: Adicione este trecho para inicializar o Firebase Admin SDK
-// Use o caminho para o seu arquivo de service account JSON.
-// const serviceAccount = require('../../path/to/seu-arquivo-firebase-admin.json');
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-// -------------------------------------------------------------
 
 const authMiddleware = async (req, res, next) => {
   console.log('Middleware de autenticação em execução...');
