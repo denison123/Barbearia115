@@ -19,16 +19,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
 
-// CORREÇÃO: Esta rota principal serve o arquivo index.html,
-// que é o ponto de entrada da sua aplicação de frontend.
-app.get('/', (req, res) => {
+// Rota principal que serve o index.html.
+// Esta rota é o ponto de entrada da sua aplicação de frontend (SPA - Single Page Application).
+// Qualquer outra rota do frontend (como '/login', '/dashboard', etc.) será gerenciada
+// pelo JavaScript do lado do cliente (navegador).
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Rota para servir o arquivo login.html diretamente
-// Acessível em https://barbearia-backend-9h56.onrender.com/login.html
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 // Importar e usar rotas da API
@@ -36,11 +32,6 @@ const authRoutes = require('./routes/auth');
 const barberRoutes = require('./routes/barbers');
 app.use('/api/auth', authRoutes);
 app.use('/api/barber', barberRoutes);
-
-// A rota de dashboard também é uma parte do frontend e é servida por express.static
-// app.get('/barber-dashboard.html', (req, res) => {
-//    res.sendFile(path.join(__dirname, 'public', 'barber-dashboard.html'));
-// });
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
