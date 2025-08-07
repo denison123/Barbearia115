@@ -1,49 +1,42 @@
 // backend/controllers/dashboardController.js
+// Este é um controlador de exemplo. Você precisará implementar a lógica real aqui.
 
-const dashboardController = {
-    async getMonthlyStats(req, res) {
-        const { barberId } = req.params;
-        const { month, year } = req.query;
+// Função para obter estatísticas mensais
+exports.getMonthlyStats = (req, res) => {
+  // CORREÇÃO: O parâmetro 'barberId' está em req.params, não em req.body
+  const { barberId } = req.params;
+  
+  // A lógica de autenticação foi tratada pelo authMiddleware
+  console.log(`Buscando estatísticas mensais para o barbeiro com ID: ${barberId}`);
+  
+  // Simula a busca de dados do banco de dados
+  const mockStats = {
+    totalRevenue: 5000,
+    totalAppointments: 150,
+    monthlyTarget: 6000
+  };
 
-        console.log(`[Backend Dashboard] Recebida requisição para estatísticas: Barbeiro ${barberId}, Mês ${month}, Ano ${year}`);
-
-        try {
-            const stats = {
-                completedCuts: 15, // Dados mock
-                pendingCuts: 3,
-                cancelledCuts: 1
-            };
-            res.status(200).json(stats);
-        } catch (error) {
-            console.error('Erro ao buscar estatísticas mensais:', error);
-            res.status(500).json({ message: 'Erro interno do servidor ao buscar estatísticas mensais.' });
-        }
-    },
-
-    async getAppointmentsByDate(req, res) {
-        const { barberId } = req.params;
-        const { date } = req.query;
-
-        console.log(`[Backend Dashboard] Recebida requisição para agendamentos por data: Barbeiro ${barberId}, Data ${date}`);
-
-        try {
-            const mockAppointments = [
-                { id: 'appt1', time: '09:00', customerName: 'Ana Silva', customerPhone: '987654321', paymentMethod: 'Cartão de Crédito', status: 'completed' },
-                { id: 'appt2', time: '10:30', customerName: 'Bruno Costa', customerPhone: '123456789', paymentMethod: 'Dinheiro', status: 'pending' },
-            ];
-
-            // Filtra os agendamentos mockados para a data solicitada (ex: para testar com '2025-07-23')
-            const filteredAppointments = mockAppointments.filter(appt => {
-                // Você pode ajustar as datas aqui para testar diferentes dias
-                return date === '2025-07-23' || date === '2025-07-24';
-            });
-
-            res.status(200).json(filteredAppointments);
-        } catch (error) {
-            console.error('Erro ao buscar agendamentos por data:', error);
-            res.status(500).json({ message: 'Erro interno do servidor ao buscar agendamentos por data.' });
-        }
-    },
+  res.status(200).json({
+    message: 'Estatísticas mensais obtidas com sucesso.',
+    stats: mockStats
+  });
 };
 
-module.exports = dashboardController;
+// Função para obter agendamentos por data
+exports.getAppointmentsByDate = (req, res) => {
+  const { barberId } = req.params;
+  const { date } = req.query; // Assume que a data é passada como um query parameter
+  
+  console.log(`Buscando agendamentos para o barbeiro com ID: ${barberId} na data: ${date}`);
+
+  // Simula a busca de dados do banco de dados
+  const mockAppointments = [
+    { id: 'app1', clientName: 'João Silva', time: '09:00' },
+    { id: 'app2', clientName: 'Maria Oliveira', time: '10:30' }
+  ];
+
+  res.status(200).json({
+    message: 'Agendamentos obtidos com sucesso.',
+    appointments: mockAppointments
+  });
+};

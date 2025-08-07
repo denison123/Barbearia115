@@ -3,6 +3,21 @@
 // URL base do seu backend
 const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com';
 
+// =================================================================
+// FUNÇÃO PARA EXIBIR MENSAGENS PERSONALIZADAS (SUBSTITUI O alert())
+// AVISO: Em um ambiente de produção, esta função deve exibir um modal
+// personalizado na sua UI, e não apenas logar no console.
+// =================================================================
+function showModal(message) {
+    console.log(`[MODAL] ${message}`);
+    // EX: Adicione aqui a lógica para exibir um modal HTML/CSS
+    // document.getElementById('my-custom-modal-message').textContent = message;
+    // document.getElementById('my-custom-modal').style.display = 'block';
+    // Por enquanto, vamos usar um simples log para fins de demonstração.
+    alert(message); // Mantendo o alert para o exemplo rodar, mas a ideia é remover
+}
+
+
 // Função para formatar datas para o formato YYYY-MM-DD
 function formatDate(date) {
     const year = date.getFullYear();
@@ -13,14 +28,13 @@ function formatDate(date) {
 
 // Variáveis globais para o mês/ano dos calendários
 let currentAppointmentsDate = new Date(); // Inicia com a data atual para o calendário de agendamentos
-let currentManageDate = new Date();        // Inicia com a data atual para o calendário de gerenciar disponibilidade
-let selectedManageDates = new Set();       // Armazena as datas selecionadas para disponibilidade
+let currentManageDate = new Date(); // Inicia com a data atual para o calendário de gerenciar disponibilidade
+let selectedManageDates = new Set(); // Armazena as datas selecionadas para disponibilidade
 
 // Função para buscar e exibir estatísticas
 async function fetchAndDisplayStats(barberId, token) {
     console.log('[fetchAndDisplayStats] Buscando estatísticas...');
     try {
-        // CORREÇÃO: Adicionado '/api' ao caminho da URL
         const response = await fetch(`${API_BASE_URL}/api/barber/dashboard-stats`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -37,16 +51,16 @@ async function fetchAndDisplayStats(barberId, token) {
             console.error('Erro ao carregar estatísticas:', response.status, response.statusText);
             const errorData = await response.json();
             if (response.status === 401 || response.status === 403) {
-                alert('Sua sessão expirou ou não está autorizada. Faça login novamente.');
+                showModal('Sua sessão expirou ou não está autorizada. Faça login novamente.');
                 localStorage.clear();
                 window.location.href = 'login.html';
             } else {
-                alert(`Erro ao carregar estatísticas: ${errorData.message || response.statusText}`);
+                showModal(`Erro ao carregar estatísticas: ${errorData.message || response.statusText}`);
             }
         }
     } catch (error) {
         console.error('Erro de rede ou servidor ao buscar estatísticas:', error);
-        alert('Não foi possível conectar ao servidor para carregar as estatísticas.');
+        showModal('Não foi possível conectar ao servidor para carregar as estatísticas.');
     }
 }
 
@@ -54,7 +68,6 @@ async function fetchAndDisplayStats(barberId, token) {
 async function updateAppointmentStatus(appointmentId, newStatus, barberId, token) {
     console.log(`[updateAppointmentStatus] Atualizando agendamento ${appointmentId} para status: ${newStatus}`);
     try {
-        // CORREÇÃO: Adicionado '/api' ao caminho da URL
         const response = await fetch(`${API_BASE_URL}/api/barber/appointments/${appointmentId}/status`, {
             method: 'PUT',
             headers: {
@@ -67,7 +80,7 @@ async function updateAppointmentStatus(appointmentId, newStatus, barberId, token
         const data = await response.json();
 
         if (response.ok) {
-            alert(`Agendamento ${appointmentId} atualizado para: ${newStatus}`);
+            showModal(`Agendamento ${appointmentId} atualizado para: ${newStatus}`);
             // Recarrega os agendamentos para a data atual para refletir a mudança
             const selectedDate = document.getElementById('selected-date-display').textContent;
             fetchAndDisplayAppointments(barberId, token, selectedDate);
@@ -76,14 +89,13 @@ async function updateAppointmentStatus(appointmentId, newStatus, barberId, token
             console.log('[updateAppointmentStatus] Status atualizado com sucesso.');
         } else {
             console.error('Erro ao atualizar status do agendamento:', data.message || response.statusText);
-            alert(`Erro ao atualizar agendamento: ${data.message || 'Erro desconhecido'}`);
+            showModal(`Erro ao atualizar agendamento: ${data.message || 'Erro desconhecido'}`);
         }
     } catch (error) {
         console.error('Erro de rede ao atualizar status:', error);
-        alert('Não foi possível conectar ao servidor para atualizar o agendamento.');
+        showModal('Não foi possível conectar ao servidor para atualizar o agendamento.');
     }
 }
-
 
 // Função para buscar e exibir agendamentos para uma data específica
 async function fetchAndDisplayAppointments(barberId, token, date) {
@@ -95,7 +107,6 @@ async function fetchAndDisplayAppointments(barberId, token, date) {
     selectedDateDisplay.textContent = date;
 
     try {
-        // CORREÇÃO: Adicionado '/api' ao caminho da URL
         const response = await fetch(`${API_BASE_URL}/api/barber/appointments?date=${date}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -165,7 +176,7 @@ async function fetchAndDisplayAppointments(barberId, token, date) {
                             if (barberId && token) {
                                 updateAppointmentStatus(appt.id, 'completed', barberId, token);
                             } else {
-                                alert('Erro: Dados do barbeiro ou token ausentes.');
+                                showModal('Erro: Dados do barbeiro ou token ausentes.');
                                 localStorage.clear();
                                 window.location.href = 'login.html';
                             }
@@ -180,7 +191,7 @@ async function fetchAndDisplayAppointments(barberId, token, date) {
                             if (barberId && token) {
                                 updateAppointmentStatus(appt.id, 'cancelled', barberId, token);
                             } else {
-                                alert('Erro: Dados do barbeiro ou token ausentes.');
+                                showModal('Erro: Dados do barbeiro ou token ausentes.');
                                 localStorage.clear();
                                 window.location.href = 'login.html';
                             }
@@ -192,7 +203,7 @@ async function fetchAndDisplayAppointments(barberId, token, date) {
             console.error('Erro ao carregar agendamentos:', response.status, response.statusText);
             const errorData = await response.json();
             if (response.status === 401 || response.status === 403) {
-                alert('Sessão expirada ou não autorizada. Faça login novamente.');
+                showModal('Sessão expirada ou não autorizada. Faça login novamente.');
                 localStorage.clear();
                 window.location.href = 'login.html';
             } else {
@@ -215,7 +226,6 @@ async function fetchAndMarkAppointmentsInCalendar(barberId, token, dateObj) {
         const year = dateObj.getFullYear();
         const month = dateObj.getMonth(); // Mês é 0-indexado
 
-        // CORREÇÃO: Adicionado '/api' ao caminho da URL
         const response = await fetch(`${API_BASE_URL}/api/barber/appointments?month=${month}&year=${year}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -327,7 +337,7 @@ function renderAppointmentsCalendar(dateObj) {
             if (barberId && token) {
                 fetchAndDisplayAppointments(barberId, token, selectedDate);
             } else {
-                alert('Informações do barbeiro ou token não encontrados. Faça login novamente.');
+                showModal('Informações do barbeiro ou token não encontrados. Faça login novamente.');
                 localStorage.clear();
                 window.location.href = 'login.html';
             }
@@ -347,7 +357,6 @@ async function fetchAndDisplayAvailableDays(barberId, token) {
     selectedManageDates.clear(); // Limpa as datas selecionadas ao recarregar
 
     try {
-        // CORREÇÃO: Adicionado '/api' ao caminho da URL
         const response = await fetch(`${API_BASE_URL}/api/barber/${barberId}/available-days`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -390,7 +399,6 @@ async function saveAvailableDays(barberId, token) {
         const datesToSave = Array.from(selectedManageDates); // Converte o Set para Array
         console.log('Enviando dias disponíveis para salvar:', datesToSave);
 
-        // CORREÇÃO: Adicionado '/api' ao caminho da URL
         const response = await fetch(`${API_BASE_URL}/api/barber/available-days`, {
             method: 'POST',
             headers: {
@@ -403,17 +411,17 @@ async function saveAvailableDays(barberId, token) {
         const data = await response.json();
 
         if (response.ok) {
-            alert(data.message || 'Dias disponíveis salvos com sucesso!');
+            showModal(data.message || 'Dias disponíveis salvos com sucesso!');
             // Recarrega a lista de dias disponíveis e o calendário após salvar
             fetchAndDisplayAvailableDays(barberId, token);
             console.log('[saveAvailableDays] Dias disponíveis salvos com sucesso.');
         } else {
             console.error('Erro ao salvar dias disponíveis:', data.message || response.statusText);
-            alert(`Erro ao salvar dias disponíveis: ${data.message || 'Erro desconhecido'}`);
+            showModal(`Erro ao salvar dias disponíveis: ${data.message || 'Erro desconhecido'}`);
         }
     } catch (error) {
         console.error('Erro de rede ao salvar dias disponíveis:', error);
-        alert('Não foi possível conectar ao servidor para salvar os dias disponíveis.');
+        showModal('Não foi possível conectar ao servidor para salvar os dias disponíveis.');
     }
 }
 
@@ -612,7 +620,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (barberId && token) {
                 saveAvailableDays(barberId, token);
             } else {
-                alert('Erro: Dados do barbeiro ou token ausentes.');
+                showModal('Erro: Dados do barbeiro ou token ausentes.');
                 localStorage.clear();
                 window.location.href = 'login.html';
             }
