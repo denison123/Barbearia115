@@ -6,18 +6,18 @@
 
 // A URL base do seu backend.
 // É CRUCIAL que esta URL esteja correta e aponte para a sua aplicação no Render.
-// O sufixo '/api' já está incluído aqui, então não o adicione novamente na rota de fetch.
 const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com/api';
 
 // Configuração do Firebase Client - VOCÊ PRECISA PREENCHER ISTO COM AS SUAS CREDENCIAIS.
 // Obtenha estas informações do seu console do Firebase no projeto que você criou.
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY", // <--- PREENCHA AQUI
-    authDomain: "YOUR_AUTH_DOMAIN", // <--- PREENCHA AQUI
-    projectId: "YOUR_PROJECT_ID", // <--- PREENCHA AQUI
-    storageBucket: "YOUR_STORAGE_BUCKET", // <--- PREENCHA AQUI
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <--- PREENCHA AQUI
-    appId: "YOUR_APP_ID" // <--- PREENCHA AQUI
+    apiKey: "AIzaSyCFVhwa0nDkqmfuPvOr_0-_SDQXkVqKGm8",
+    authDomain: "barbearia115.firebaseapp.com",
+    projectId: "barbearia115",
+    storageBucket: "barbearia115.firebasestorage.app",
+    messagingSenderId: "57210793797",
+    appId: "1:57210793797:web:401b9918cf531595ce182c",
+    measurementId: "G-ZFYTWQF351"
 };
 
 // Inicializa o Firebase
