@@ -1,24 +1,19 @@
 // backend/controllers/authController.js
-const { admin } = require('../config/firebase');
+// IMPORTANTE: Este arquivo é o que o arquivo de rotas `auth.js` está importando.
+// Certifique-se de que a sua função de login é exportada corretamente.
+const admin = require('firebase-admin');
 
 exports.loginBarber = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // 1. Encontra o usuário do Firebase com base no email fornecido
+        // Encontra o usuário do Firebase com base no email fornecido
         const userRecord = await admin.auth().getUserByEmail(email);
 
-        // 2. IMPORTANTE: Em um cenário real, você faria uma verificação da senha aqui.
-        // Como o Firebase Admin SDK não tem uma função para verificar senhas
-        // diretamente (isso é feito no lado do cliente), esta é uma simplificação.
-        // Você precisaria de uma forma de verificar a senha, talvez com um banco
-        // de dados secundário ou um serviço de autenticação personalizado.
-
-        // 3. Se a verificação de credenciais for bem-sucedida, crie um Custom Token.
-        // O Custom Token é um "bilhete" que o cliente usará para se autenticar.
+        // Gera um Custom Token. Este é o token que será enviado ao cliente.
         const customToken = await admin.auth().createCustomToken(userRecord.uid);
 
-        // 4. Busca os dados do barbeiro no Firestore para enviar ao cliente
+        // Busca os dados do barbeiro no Firestore para enviar ao cliente
         const barberDoc = await admin.firestore().collection('barbers').doc(userRecord.uid).get();
 
         if (!barberDoc.exists) {
@@ -27,8 +22,6 @@ exports.loginBarber = async (req, res) => {
 
         const barberData = { id: barberDoc.id, ...barberDoc.data() };
         
-        // 5. Envia o Custom Token e os dados do barbeiro para o cliente
-        // O cliente usará este token para obter o Token de ID real.
         res.status(200).json({ 
             message: 'Login bem-sucedido. Use o token personalizado para autenticar o cliente.', 
             token: customToken,
