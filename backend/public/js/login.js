@@ -1,108 +1,52 @@
-// public/js/login.js
+// login.js - Corrigido para fazer a requisição POST para o backend
 
-// Certifique-se de que o SDK do Firebase Client esteja importado no seu HTML.
-// Exemplo: <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
-// Exemplo: <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+// Certifique-se de que a URL base da sua API esteja definida corretamente.
+// Substitua "https://seu-backend.onrender.com" pela URL real do seu servidor Render.
+const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com';
 
-// A URL base do seu backend.
-// É CRUCIAL que esta URL esteja correta e aponte para a sua aplicação no Render.
-const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com/api';
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    // Impede o envio padrão do formulário, que causaria o erro "Cannot POST"
+    event.preventDefault();
 
-// Configuração do Firebase Client - VOCÊ PRECISA PREENCHER ISTO COM AS SUAS CREDENCIAIS.
-// Obtenha estas informações do seu console do Firebase no projeto que você criou.
-const firebaseConfig = {
-    apiKey: "AIzaSyCFVhwa0nDkqmfuPvOr_0-_SDQXkVqKGm8",
-    authDomain: "barbearia115.firebaseapp.com",
-    projectId: "barbearia115",
-    storageBucket: "barbearia115.firebasestorage.app",
-    messagingSenderId: "57210793797",
-    appId: "1:57210793797:web:401b9918cf531595ce182c",
-    measurementId: "G-ZFYTWQF351"
-};
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    // Objeto com os dados de login a serem enviados ao servidor
+    const loginData = {
+        email: email,
+        password: password
+    };
 
-// Inicializa o Firebase
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
+    try {
+        // Faz a requisição POST para o endpoint de login na sua API do backend
+        // A URL completa é construída usando a URL base e a rota da API
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // Converte o objeto JavaScript em uma string JSON para o corpo da requisição
+            body: JSON.stringify(loginData)
+        });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
-    const loginMessage = document.getElementById('loginMessage');
-
-    // Verifica se os elementos e o Firebase Auth foram inicializados
-    if (!loginForm || !loginMessage || !auth) {
-        console.error('Erro: Elementos do DOM ou Firebase Auth não encontrados. Verifique seu HTML e a configuração do Firebase.');
-        return;
-    }
-
-    loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        loginMessage.textContent = '';
-        loginMessage.className = 'mt-4 text-center text-sm sm:text-lg font-semibold';
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        if (!email || !password) {
-            loginMessage.textContent = 'Por favor, preencha todos os campos.';
-            loginMessage.classList.add('text-red-500');
-            return;
-        }
-
-        try {
-            loginMessage.textContent = 'Autenticando...';
-            loginMessage.classList.add('text-blue-400');
-
-            // 1. O cliente do Firebase faz o login e verifica a senha de forma segura.
-            const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-
-            // 2. Obtém o ID Token, que é a prova de autenticação do usuário.
-            const idToken = await user.getIdToken();
-
-            // 3. Envia o ID Token para o backend para obter os dados do barbeiro.
-            // A rota completa será: https://barbearia-backend-9h56.onrender.com/api/auth/profile
-            const response = await fetch(`${API_BASE_URL}/auth/profile`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}` // Envia o token no cabeçalho
-                }
-            });
-
+        // Verifica se a resposta do servidor foi bem-sucedida
+        if (response.ok) {
             const data = await response.json();
-
-            if (response.ok) {
-                // 4. Armazena o ID Token e os dados do barbeiro no localStorage.
-                localStorage.setItem('token', idToken);
-                localStorage.setItem('barber', JSON.stringify(data.barber));
-
-                loginMessage.textContent = 'Login bem-sucedido!';
-                loginMessage.classList.add('text-green-500');
-
-                setTimeout(() => {
-                    window.location.href = 'barber-dashboard.html';
-                }, 1000);
-            } else {
-                loginMessage.textContent = data.message || 'Erro ao buscar dados do barbeiro.';
-                loginMessage.classList.add('text-red-500');
-                // O Firebase já lidou com erros de credenciais, este é um erro do backend.
-                console.error('Erro no backend após autenticação:', data.message);
-            }
-        } catch (error) {
-            // Este bloco captura erros de credenciais do Firebase
-            let errorMessage = 'Erro ao fazer login. Verifique seu email e senha.';
-            if (error.code === 'auth/user-not-found') {
-                errorMessage = 'Usuário não encontrado.';
-            } else if (error.code === 'auth/wrong-password') {
-                errorMessage = 'Senha incorreta.';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'Endereço de e-mail inválido.';
-            }
-            loginMessage.textContent = errorMessage;
-            loginMessage.classList.add('text-red-500');
-            console.error('Erro de login do Firebase:', error);
+            console.log('Login bem-sucedido:', data);
+            
+            // Aqui você pode redirecionar o usuário ou salvar o token de autenticação
+            // window.location.href = '/dashboard.html';
+        } else {
+            // A requisição falhou, exibe uma mensagem de erro
+            const error = await response.json();
+            console.error('Falha no login:', error.message);
+            // Mostra a mensagem de erro para o usuário (em um elemento HTML)
+            // document.getElementById('errorMessage').textContent = error.message;
         }
-    });
+
+    } catch (error) {
+        // Exibe um erro de rede ou de conexão
+        console.error('Erro ao conectar ao servidor:', error);
+        // document.getElementById('errorMessage').textContent = 'Erro de conexão. Tente novamente.';
+    }
 });
