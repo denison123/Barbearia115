@@ -1,37 +1,56 @@
-// index.js
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
+// login.js - Versão com redirecionamento para barbeiro ou cliente
 
-// Certifique-se de que o Firebase Admin SDK seja inicializado
-require('./config/firebase');
+// Substitua "https://seu-backend.onrender.com" pela URL real do seu servidor Render.
+const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com';
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-// Middlewares para CORS e análise do corpo da requisição
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    const loginData = {
+        email: email,
+        password: password
+    };
 
-// Servir arquivos estáticos da pasta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
-console.log(`Servindo arquivos estáticos de: ${path.join(__dirname, 'public')}`);
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginData)
+        });
 
-// Rota principal que serve o index.html para todas as rotas do frontend.
-// O '/*' captura todas as rotas que não são APIs, permitindo que o roteamento
-// do lado do cliente (via JavaScript) funcione.
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Login bem-sucedido:', data);
+            
+            // Supondo que a resposta do backend inclua o tipo de usuário (ex: 'barbeiro' ou 'cliente')
+            // Se o seu backend retorna o tipo de usuário em 'data.user.role', por exemplo
+            const userRole = data.user.role; 
 
-// Importar e usar rotas da API
-const authRoutes = require('./routes/auth');
-const barberRoutes = require('./routes/barbers');
-app.use('/api/auth', authRoutes);
-app.use('/api/barber', barberRoutes);
+            // Lógica de redirecionamento baseada no tipo de usuário
+            if (userRole === 'barbeiro') {
+                window.location.href = '/barbeiro.html';
+            } else if (userRole === 'cliente') {
+                window.location.href = '/cliente.html';
+            } else {
+                // Se o tipo de usuário for desconhecido, redireciona para uma página padrão
+                window.location.href = '/dashboard.html';
+            }
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+        } else {
+            const error = await response.json();
+            console.error('Falha no login:', error.message);
+            // Exiba a mensagem de erro para o usuário
+            // Por exemplo: document.getElementById('errorMessage').textContent = error.message;
+        }
+
+    } catch (error) {
+        console.error('Erro ao conectar ao servidor:', error);
+        // Exiba a mensagem de erro de conexão
+        // Por exemplo: document.getElementById('errorMessage').textContent = 'Erro de conexão. Tente novamente.';
+    }
 });
