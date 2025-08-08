@@ -1,7 +1,4 @@
-// login.js - Versão com redirecionamento para barbeiro ou cliente
-
-// Substitua "https://seu-backend.onrender.com" pela URL real do seu servidor Render.
-const API_BASE_URL = 'https://barbearia-backend-9h56.onrender.com';
+// public/js/login.js - Código do navegador (frontend)
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -15,7 +12,8 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     };
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        // O frontend chama a rota da API definida no backend (index.js)
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -27,30 +25,25 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             const data = await response.json();
             console.log('Login bem-sucedido:', data);
             
-            // Supondo que a resposta do backend inclua o tipo de usuário (ex: 'barbeiro' ou 'cliente')
-            // Se o seu backend retorna o tipo de usuário em 'data.user.role', por exemplo
             const userRole = data.user.role; 
 
-            // Lógica de redirecionamento baseada no tipo de usuário
+            // Redireciona o usuário
             if (userRole === 'barbeiro') {
-                window.location.href = '/barbeiro.html';
+                window.location.href = '/barber-dashboard.html';
             } else if (userRole === 'cliente') {
-                window.location.href = '/cliente.html';
+                window.location.href = '/client-dashboard.html';
             } else {
-                // Se o tipo de usuário for desconhecido, redireciona para uma página padrão
-                window.location.href = '/dashboard.html';
+                window.location.href = '/index.html';
             }
 
         } else {
             const error = await response.json();
             console.error('Falha no login:', error.message);
-            // Exiba a mensagem de erro para o usuário
-            // Por exemplo: document.getElementById('errorMessage').textContent = error.message;
+            // Exibir a mensagem de erro na UI
         }
 
     } catch (error) {
         console.error('Erro ao conectar ao servidor:', error);
-        // Exiba a mensagem de erro de conexão
-        // Por exemplo: document.getElementById('errorMessage').textContent = 'Erro de conexão. Tente novamente.';
+        // Exibir a mensagem de erro de conexão na UI
     }
 });
