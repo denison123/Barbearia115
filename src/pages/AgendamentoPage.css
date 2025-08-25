@@ -1,0 +1,8 @@
+/* src/pages/AgendamentoPage.css */
+
+.agendamento-page-container {
+  padding: 2rem 1rem;
+  background-color: #121212;
+  color: #f0f0f0;
+  min-height: 100vh;
+}

@@ -1,0 +1,18 @@
+/* Media Query para telas de no máximo 600px (smartphones) */
+@media (max-width: 600px) {
+  .selecao-servico-container {
+    padding: 1rem; /* Diminui o padding da página */
+  }
+
+  .servico-lista {
+    gap: 1rem; /* Reduz o espaçamento entre os cards */
+  }
+
+  .servico-card h3 {
+    font-size: 1.2rem; /* Diminui o tamanho do título */
+  }
+
+  .servico-card .servico-info {
+    font-size: 0.9rem; /* Diminui a fonte das informações */
+  }
+}

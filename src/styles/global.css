@@ -1,0 +1,27 @@
+/* src/styles/global.css */
+
+/* Importa uma fonte moderna do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Variáveis de cores */
+:root {
+  --color-primary: #e0b060; /* Dourado/Âmbar para destaque */
+  --color-secondary: #f0f0f0; /* Branco/cinza claro para textos */
+  --color-background-dark: #121212; /* Fundo principal escuro */
+  --color-background-card: #1a1a1a; /* Fundo de cards/componentes */
+  --color-text-light: #a0a0a0; /* Textos secundários */
+}
+
+/* Estilos globais para a aplicação */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-background-dark);
+  color: var(--color-secondary);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+}

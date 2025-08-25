@@ -1,0 +1,23 @@
+/* Estilos existentes para desktop */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Media Query para telas de no máximo 768px (tablets e celulares) */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column; /* Empilha o logo e o botão */
+    gap: 1rem; /* Adiciona um espaçamento entre eles */
+  }
+
+  .logo {
+    font-size: 1.2rem; /* Diminui o tamanho do logo */
+  }
+
+  .nav .cta-button {
+    padding: 0.5rem 1rem; /* Diminui o tamanho do botão */
+    font-size: 0.9rem; /* Diminui o tamanho da fonte */
+  }
+}
