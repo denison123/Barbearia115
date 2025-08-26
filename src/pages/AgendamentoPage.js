@@ -33,7 +33,7 @@ const AgendamentoPage = () => {
   const handleFinalizarAgendamento = async (agendamentoFinal) => {
     try {
       // Faz a requisição POST para a API do backend
-      const response = await fetch('http://localhost:5000/api/agendar', {
+      const response = await fetch('https://barbearia115.onrender.com/api/agendar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(agendamentoFinal),
