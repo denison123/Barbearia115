@@ -3,7 +3,7 @@
 import React from 'react';
 import Header from '../components/Header/Header';
 import HeroSection from '../components/HeroSection/HeroSection';
-//import Footer from '../components/Footer/Footer';
+// import Footer from '../components/Footer/Footer'; // Importação comentada
 import './HomePage.css';
 
 const HomePage = () => {
@@ -11,7 +11,7 @@ const HomePage = () => {
     <div className="home-page-container">
       <Header />
       <HeroSection />
-      <Footer />
+      {/* <Footer /> */} {/* A tag do componente também deve ser comentada */}
     </div>
   );
 };
